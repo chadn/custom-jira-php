@@ -7,7 +7,7 @@ This repo contains php scripts that use Jira's REST API
 - [JiraApi.php](JiraApi.php) - PHP Class and adapter for Jira API
 - [JiraWorklog.php](JiraWorklog.php) - PHP Class to handle parsing and summarizing jira worklogs
 - [jira-worklog.php](jira-worklog.php) - wrapper for JiraWorklog.php, provides web and command line interface (cli)
-- [jira-worklog.php](jira-worklog.php) - wrapper for JiraWorklog.php, provides web and command line interface (cli)
+- [jira-worklog.json](jira-worklog.son) - example json output for jira-worklog.php
 - [jira-config.php](jira-config.php) - config file for jira-worklog.php, update this with your Jira API password.
 
 ## jira-worklog.php
@@ -37,9 +37,9 @@ php ./jira-worklog.php -f=2017-1-1  -t=2017-1-1    # just new years day 2017
 php ./jira-worklog.php -f=2017-1    -t=2017-3      # Q1 of 2017
 ```
 
-### Example outputs
+### Examples
 
-Example of summarizing all time logged from beginning of current month to today for all users
+Example showing summary all time logged from beginning of current month to today for all users
 ```
 time php custom-jira-php/jira-worklog.php -f='first day of this month'
 
