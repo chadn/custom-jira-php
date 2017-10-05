@@ -8,10 +8,29 @@ This repo contains php scripts that use Jira's REST API
 
 Outputs a summary of hours logged to Jira issues over a given timespan.  This is a simple free alternative to [Tempo Timesheets](https://tempo.io/products/tempo-timesheets)
 
+```
+php ./jira-worklog.php [options]
+
+  -f str  from date string, anything that can be parsed by strtotime(). REQUIRED.
+  -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'today'.
+  -o out  output format, specify one of: txt, json, html.  Optional, default is txt.
+  -k key  jira issue key, will add comment containing worklog summary.  Optional.
+  -c fn   config file, where you store apiCredentials. Optional, default is ./jira-config.php
+  -v      verbose output, including basic timing info with API.
+  -d      debug output - warning - this contains a ton of information.
+  -h      show this help and exit.
+
+Examples:
+
+php ./jira-worklog.php -f='-7 days'                 # the last 7 days
+php ./jira-worklog.php -f='-7 days'  -k='CN-12'     # the last 7 days, and post comment to CN-12
+php ./jira-worklog.php -f='2017-1-1' -t='2017-1-1'  # just new years day 2017
+php ./jira-worklog.php -f='2017-1'   -t='2017-3'    # Q1 of 2017
+```
+
 Example of summarizing all time logged from beginning of current month to today for all users
 ```
-# on linux:
-php custom-jira-php/jira-worklog.php  `date -d "this month" "+%Y-%m"` `date "+%Y-%m-%d"` 
+time php custom-jira-php/jira-worklog.php -f='first day of this month'
 
 63.8h Total Time logged, 2017-09-01 Fri - 2017-09-22 Fri
  as of 2017-09-22 Fri 2:36pm CDT
@@ -55,12 +74,16 @@ Daily Worklogs:
 4.1h Tue 2017-09-19 -- 1h CN-8, 30m CN-10, 1h CN-133, 15m CN-138, 20m CN-141, 1h CN-142
   4h Wed 2017-09-20 -- 1h CN-8, 1h CN-133, 2h CN-144
 1.7h Thu 2017-09-21 -- 10m CN-99, 30m CN-143, 1h CN-144
+
+real 2.040  user 0.338  sys 0.031 pcpu 18.10
 ```
 
 ### Todo
 
-- make sure cmd-line works when called from browser
++ make sure cmd-line works and web interface work
++ support text, html, or json output
 - add support for filtering by jira user
+- support case where worklogs are in more than 999 jira issues
 - improve html output
 - add csv output
 - add phpunit tests, lint

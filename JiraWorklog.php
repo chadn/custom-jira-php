@@ -13,7 +13,7 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * configuration options that will overwrite JiraApi config
+     * configuration options that will overwrite and merge with parent JiraApi $config
      *
      * @var array
      */
@@ -32,7 +32,12 @@ class JiraWorklog extends JiraApi
      */
     function __construct($cfg) {
         $this->setConfig($this->jwConfig);
-        return parent::__construct($cfg);
+        parent::__construct($cfg);
+
+        if ($this->config['debug']) {
+            //var_dump($this->config);
+        }
+        return $this;
     }
 
 
@@ -238,6 +243,21 @@ class JiraWorklog extends JiraApi
         return $txtStr;
     }
 
+    /**
+     * Returns string formatted as fmt from most recent worklog request. 
+     * 
+     * @param  string $fmt output format, one of 'txt', 'html', 'json', 'jira'
+     * @return string  
+     */
+    public function getOutput($fmt) {
+        switch ($fmt) {
+            case 'json':  return $this->outputJson(); 
+            case 'html':  return $this->outputHtml(); 
+            case 'jira':  return $this->outputJiraComment(); 
+            case 'txt':   return $this->outputTxt(); 
+            default:      return $this->outputTxt(); 
+        }
+    }
 
     /**
      * Returns string formatted as json from most recent worklog request. 
@@ -245,6 +265,7 @@ class JiraWorklog extends JiraApi
      * @return string  
      */
     public function outputJson() {
+        header('Content-Type: application/json');
         $ret = [
             'req' => $this->req,
             'res' => $this->res
@@ -282,9 +303,9 @@ class JiraWorklog extends JiraApi
      * @return string  
      */
     public function outputHtml() {
-        $output = "\n". $this->prettyPrintWorklogSummary() . "\n";
-        $output .= "\n<pre>\n" . $this->prettyPrintWorklogIssues() . "</pre>\n";
-        $output .= "\n<pre>\n" . $this->prettyPrintWorklogDailyTotal() . "</pre>\n";
+        $output = "\n<pre>\n". $this->prettyPrintWorklogSummary() . "\n";
+        $output .= "\n" . $this->prettyPrintWorklogIssues() . "\n";
+        $output .= "\n\n" . $this->prettyPrintWorklogDailyTotal() . "</pre>\n";
         return $output;
     }
 
@@ -304,7 +325,7 @@ class JiraWorklog extends JiraApi
         //$post['body'] = "^Comment orig date: ". date('r', strtotime($a->date)) ."^\n\n". $post['body'];
         //$post['updated'] = $post['created'] = strtotime($a->date); // "2016-12-16T00:08:54.072Z"; 
         
-        $ret = json_decode($this->apiCall("issue/$jiraKey/comment", 'POST', $post), true);
+        $ret = json_decode($this->apiCall("issue/$key/comment", 'POST', $post), true);
 
         return $ret;
     }

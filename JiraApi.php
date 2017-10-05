@@ -72,8 +72,10 @@ class JiraApi
         );
         $start = microtime(true);
         $ch = curl_init();
+        if ($this->config['debug']) {
+            curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -89,14 +91,25 @@ class JiraApi
 
         $result = curl_exec($ch);
         $ch_error = curl_error($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
         $elapsedMs = round(1000*(microtime(true) - $start));
 
         if ($this->config['echoTiming']) {
-            echo "curl: err=$ch_error $elapsedMs" . "ms $type ". strlen($datas) ." ". strlen($result) ." $url\n";
+            echo "curl: err=$ch_error $elapsedMs" . "ms $httpcode $type ";
+            echo strlen($datas) ." ". strlen($result) ." $url\n";
         }
         if ($ch_error) {
             throw new Exception("cURL Error: $ch_error");
+
+        } elseif (403 == $httpcode) {
+            $msg = "Common problem is too many failed login attempts.  Verify and reset here:\n";
+            $msg .= $this->config['apiBaseUrl'] . "/secure/admin/user/UserBrowser.jspa\n\n";
+            throw new Exception("cURL expected HTTP 200, got $httpcode\n$msg");
+
+        } elseif (200 != $httpcode) {
+            throw new Exception("cURL expected HTTP 200, got $httpcode");
+
         } else {
             if ('GET'==$type && $this->config['useLocalJiraCache']) {
                 $this->localJiraCache[$cacheKey] = $result;

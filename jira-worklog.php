@@ -2,48 +2,79 @@
 
 include 'JiraWorklog.php';
 
-// TODO: support cmd-line and http request variables 
-// 
-// http://php.net/manual/en/function.getopt.php
-// Script example.php
-// f:   required value
-// p::  optional value
-// abc  these options do not accept values
-//$options = getopt("f:hp:");
-//var_dump($options);
+$cfgFile = './jira-config.php';
 
-// http://php.net/manual/en/reserved.variables.request.php
-// $_REQUEST — HTTP Request variables, An associative array that by default contains the contents of $_GET, $_POST and $_COOKIE.
+// Determine if command-line-interface or web interface
+$isCli = php_sapi_name() == 'cli'; 
 
+$url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
+$me = $isCli ? "php " . $argv[0] : $url;
+$outfmt = $isCli ? 'txt' : 'html';
 
-
-#
-# Get timespent report 
-# 
-$me = __FILE__;
 $usage = <<<USAGEOF
-php $me <fromDate> [toDate] [jira-key]
 
-jira-key - if exists, adds comment containing worklog summary.  
+$me [options]
+
+  -f str  from date string, anything that can be parsed by strtotime(). REQUIRED.
+  -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'today'.
+  -o out  output format, specify one of: txt, json, html.  Optional, default is $outfmt.
+  -k key  jira issue key, will add comment containing worklog summary.  Optional.
+  -c fn   config file, where you store apiCredentials. Optional, default is $cfgFile
+  -v      verbose output, including basic timing info with API.
+  -d      debug output - warning - this contains a ton of information.
+  -h      show this help and exit.
 
 Examples:
 
-php $me '2017-1' '2017-3'      # all of Q1
-php $me '2017-1-1' '2017-1-1'  # just new years day
-php $me `date -d "7 days ago" "+%Y-%m-%d"` `date -d "yesterday" "+%Y-%m-%d"` # last 7 days on GNU, Linux
-php $me `date -d "last month" "+%Y-%m"` `date -d "last month" "+%Y-%m"`      # last month on GNU, Linux
-php $me `date -j -v-7d "+%Y-%m-%d"` `date -j -v-1d "+%Y-%m-%d"`   # last 7 days on OSX, BSD
-php $me `date -j -v-1m "+%Y-%m"` `date -j -v-1m "+%Y-%m"` 'CN-95' # last month on OSX, BSD
-
-
 USAGEOF;
-if (!isset($argv[1])) {
+$usageCLI = <<<USAGE1CLI
+
+$me -f='-7 days'                 # the last 7 days
+$me -f='-7 days'  -k='CN-12'     # the last 7 days, and post comment to CN-12
+$me -f='2017-1-1' -t='2017-1-1'  # just new years day 2017
+$me -f='2017-1'   -t='2017-3'    # Q1 of 2017
+
+USAGE1CLI;
+$usageWeb = <<<USAGE2WEB
+
+<a href="$me?f=-7+days"               >$me?f=-7+days</a>                 # the last 7 days
+<a href="$me?f=-7+days&k=CN-12"       >$me?f=-7+days&k=CN-12</a>         # the last 7 days, and post comment to CN-12
+<a href="$me?f=2017-1-1&t=2017-1-1"   >$me?f=2017-1-1&t=2017-1-1</a>     # just new years day 2017
+<a href="$me?f=2017-1&t=2017-3&o=json">$me?f=2017-1&t=2017-3&o=json</a>  # Q1 of 2017, output in JSON
+
+USAGE2WEB;
+
+$usage .= ($isCli ? $usageCLI : $usageWeb) ."\n";
+$usage = $isCli ? $usage : "<pre>". $usage . "</pre>";
+
+
+if ($isCli) {
+    // : required,  :: optional
+    $options = getopt("f:t::o::k::c::hvd");
+
+} else {
+    // allow options from  $_GET, $_POST and $_COOKIE
+    $options = &$_REQUEST;
+}
+if (isset($options[h]) || !array_key_exists('f', $options)) {
     echo $usage;
     exit;
 }
-$fromDateInput = $argv[1];
-@$toDateInput = isset($argv[2]) ? $argv[2] : 'now()';
-@$jiraKey = $argv[3];
+
+$fromDateInput = $options['f'];
+$toDateInput   = $options['t'] ?: 'today';  // ternary shorthand
+$jiraKey       = $options['k'] ?: '';
+$outfmt        = $options['o'] ?: $outfmt;
+$cfgFile       = $options['c'] ?: $cfgFile;
+
+$cfg = loadcfg($cfgFile);
+
+if (isset($options[v])) {
+  $cfg['echoTiming'] = true;
+}
+if (isset($options[d])) {
+  $cfg['debug'] = true;
+}
 
 // Normalize input dates
 if (1 === preg_match("/(\d\d\d\d-)(\d\d?)$/", $toDateInput)) {
@@ -51,16 +82,39 @@ if (1 === preg_match("/(\d\d\d\d-)(\d\d?)$/", $toDateInput)) {
     $toDateInput  = date('Y-m-t', strtotime($toDateInput)); 
 }
 
-$fromTime = strtotime($fromDateInput);
-$toTime   = strtotime($toDateInput) + 60*60*24 -1; // end 1 second before midnight on given date
-
-$cfg = [
-    'apiBaseUrl' => 'https://jira.example.org',
-    'apiCredentials' => 'rest-api:sweeeetPassword'
-];
 $jw = new JiraWorklog($cfg);
-echo $jw->getJiraIssues($fromTime, $toTime)->outputTxt();
+$jw->getJiraIssues($fromDateInput, $toDateInput);
+echo $jw->getOutput($outfmt);
 
 if ($jiraKey) {
     $jw->postComment($jiraKey);
 }
+
+
+
+function loadcfg($cfgFile) {
+  global $usage;
+
+  if (!is_readable($cfgFile)) {
+      $cfgFile = getPathToScript() . $cfgFile;
+      if (!is_readable($cfgFile)) {
+          echo "\nERROR: Can not read config file: $cfgFile\n\n";
+          echo $usage;
+          exit;
+      }
+  }
+  $cfg = include $cfgFile;
+  return $cfg;
+}
+
+
+function getPathToScript() {
+    $path = $_SERVER["PHP_SELF"]; 
+    if ('/' != substr($path, 0, 1)) {
+        # relative path, add pwd
+        $path = $_SERVER['PWD'] ."/". $path;
+    }
+    $path = preg_replace('/[^\/]+$/', '', $path);
+    return $path;
+}
+
