@@ -20,7 +20,7 @@ class JiraWorklog extends JiraApi
     private $jwConfig = [
         'skipEmptyWorklogs' => true,  // if true, json output will only include days with worklogs
         'dailyTotalDateFmt' => 'D Y-m-d', // Fri 2017-08-11
-        'jsonIssueFields' => ['summary', 'timespent', 'timespentPretty'],
+        'jsonIssueFields' => ['summary', 'timespentPretty'],
         'displayFields' => ['timespentPretty', 'key','summary']
     ];
 
@@ -48,7 +48,7 @@ class JiraWorklog extends JiraApi
      * @param  string|int  $toDateInput   look at jira issues before this date
      * @return JiraWorklog $this (chainable)
      */
-    public function getJiraIssues($fromDateInput, $toDateInput)
+    public function getJiraIssues($fromDateInput, $toDateInput, $usernames='')
     {
         if ("string" === gettype($fromDateInput)) {
             $this->fromEpoch = strtotime($fromDateInput);
@@ -64,6 +64,10 @@ class JiraWorklog extends JiraApi
             $this->toEpoch = $toDateInput;            
         } else {
             throw new Exception("invalid type for fromDateInput, must be string or integer");
+        }
+
+        if ($usernames) {
+            $this->req['usernames'] = explode(',', $usernames);
         }
 
         $fromDateJQL = date('Y-m-d', $this->fromEpoch); 
@@ -87,7 +91,6 @@ class JiraWorklog extends JiraApi
     }
 
 
-
     /**
      * Builds array data for output using most recent worklog request. 
      * 
@@ -99,7 +102,7 @@ class JiraWorklog extends JiraApi
         }
 
         $this->dailyTotal = [];
-        $this->total = ['timespent' => 0];
+        $this->total = ['timespentSecs' => 0];
         //echo var_dump($argv); echo "$fromDate $toDate\n"; exit();
 
         // get list of jira issue keys and fields for output
@@ -109,13 +112,13 @@ class JiraWorklog extends JiraApi
 
             $secs = $this->getWorklogTotal($key, $this->fromEpoch, $this->toEpoch);
             
-            $this->total['timespent'] += $secs;
             $gflds[$key]['timespentPretty'] = $this->roundit($secs, "%5s");
+            $this->total['timespentSecs'] += $secs;
             
             $this->updateWorklogDailyTotal($key);
         }
 
-        $this->total['timespentPretty'] = $this->roundit($this->total['timespent']);
+        $this->total['timespentPretty'] = $this->roundit($this->total['timespentSecs']);
 
         $this->res = [
             'dateComputed' => date('Y-m-d D g:ia T'),
@@ -130,12 +133,14 @@ class JiraWorklog extends JiraApi
     /**
      * Returns total seconds worked between fromEpoch toEpoch by examining all worklogs 
      * 
-     * @param  string   $key issue key
-     * @param  integer  $fromEpoch 
-     * @param  integer  $toEpoch 
+     * @param  string   $key        issue key
+     * @param  integer  $fromEpoch  starting from this date, in seconds since epoch
+     * @param  integer  $toEpoch    ending at this date, in seconds since epoch
+     * @param  string   $author     if not empty, only count worklogs made by this author 
      * @return integer  $totalSecs 
      */
-    public function getWorklogTotal($key, $fromEpoch, $toEpoch) {
+    public function getWorklogTotal($key, $fromEpoch, $toEpoch, $author='') 
+    {
         $dbg = $this->config['debug'];
         $totalSecs = 0;
 
@@ -149,14 +154,15 @@ class JiraWorklog extends JiraApi
             $startedEpoch = strtotime($entry['started']);
 
             if ($startedEpoch >= $fromEpoch && $startedEpoch <= $toEpoch) {
-                //$periodLog[$key][] = $entry['timeSpentSeconds'] . " " . $entry['started'];
-                $totalSecs += $entry['timeSpentSeconds'];
-                //$this->dbg(var_export($entry, true));
 
-                $this->dbg("Using ");
-
+                if (!$author || ($author == $entry['author']['name'])) {
+                    $totalSecs += $entry['timeSpentSeconds'];
+                    $this->dbg("Using ");
+                } else {
+                    $this->dbg("Skipping ($author!={$entry['author']['name']}) ");
+                }
             } else {
-                $this->dbg("Skipping ");
+                $this->dbg("Skipping (time) ");
             }
             $this->dbg("worklog {$entry['id']} with started=$startedEpoch, " . $entry['started'] . "\n");
         }
@@ -177,16 +183,36 @@ class JiraWorklog extends JiraApi
         // for each day between fromEpoch and toEpoch, get daily total
         for ($curTime = $fromEpoch2; $curTime <= $this->toEpoch; $curTime += 60*60*24) {
 
-            $secs = $this->getWorklogTotal($key, $curTime, $curTime + 60*60*24);
-
-            if (0 === $secs && $this->config['skipEmptyWorklogs']) continue; 
-
+            $endTime = $curTime + 60*60*24; // one day increments
             $dateStr = date($this->config['dailyTotalDateFmt'], $curTime);
+
+            if ($this->req['usernames']) {
+                $users = $this->dailyTotal[$dateStr]['authors'] ?: [];
+                $secs = 0;
+                foreach ($this->req['usernames'] as $user) {
+                    $usersecs = $this->getWorklogTotal($key, $curTime, $endTime, $user);
+                    if (0 === $usersecs && $this->config['skipEmptyWorklogs']) continue;
+
+                    if (!array_key_exists($user, $users)) {
+                        $users[$user] = ['totalSecs' => 0];
+                    } 
+                    $users[$user]['totalSecs'] += $usersecs;
+                    $users[$user][$key] += $usersecs;
+                    $secs += $usersecs;
+                }
+                if (0 === $secs && $this->config['skipEmptyWorklogs']) continue; 
+            } else {
+                $secs = $this->getWorklogTotal($key, $curTime, $endTime);
+                if (0 === $secs && $this->config['skipEmptyWorklogs']) continue; 
+            }
             
             if (!array_key_exists($dateStr, $this->dailyTotal)) {
                 $this->dailyTotal[$dateStr] = ['totalSecs' => 0];
                 //echo " ---- initialized dailyTotal $dateStr\n";
             } 
+            if ($this->req['usernames']) {
+                $this->dailyTotal[$dateStr]['authors'] = $users;
+            }
             $this->dailyTotal[$dateStr]['totalSecs'] += $secs;
             $this->dailyTotal[$dateStr][$key] += $secs;
         }
@@ -204,7 +230,7 @@ class JiraWorklog extends JiraApi
             if (0 === $dt['totalSecs']) continue;
             $tmpA = [];
             foreach ($dt as $key => $secs) {
-                if ('totalSecs' == $key || 0 == $secs) continue;
+                if (0 == $secs || in_array($key, ['totalSecs','authors'])) continue;
                 $tmpA[] = $this->roundit($secs) . " $key";
             }
             $txtStr .= $this->roundit($dt['totalSecs'], "%4s") . " $dateStr -- ". implode(', ', $tmpA) ."\n";
@@ -239,7 +265,13 @@ class JiraWorklog extends JiraApi
         $toDateOutput   = date('Y-m-d D', $this->toEpoch); 
 
         $txtStr = $this->res['total']['timespentPretty'] . " Total Time logged, ";
-        $txtStr .= "$fromDateOutput - $toDateOutput\n as of ". $this->res['dateComputed'] ."\n";
+        $txtStr .= "from $fromDateOutput to $toDateOutput\n";
+        if ($this->req['usernames']) {
+            $just1 = 1 === count($this->req['usernames']);
+            $txtStr .= "only by ". ($just1 ? 'this user: ' : 'these users: ');
+            $txtStr .= implode(', ', $this->req['usernames']) ."\n";
+        }
+        $txtStr .= " as of ". $this->res['dateComputed'] ."\n";
         return $txtStr;
     }
 
