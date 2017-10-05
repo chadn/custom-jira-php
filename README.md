@@ -4,15 +4,22 @@
 
 This repo contains php scripts that use Jira's REST API
 
+- [JiraApi.php](JiraApi.php) - PHP Class and adapter for Jira API
+- [JiraWorklog.php](JiraWorklog.php) - PHP Class to handle parsing and summarizing jira worklogs
+- [jira-worklog.php](jira-worklog.php) - wrapper for JiraWorklog.php, provides web and command line interface (cli)
+- [jira-worklog.php](jira-worklog.php) - wrapper for JiraWorklog.php, provides web and command line interface (cli)
+- [jira-config.php](jira-config.php) - config file for jira-worklog.php, update this with your Jira API password.
+
 ## jira-worklog.php
 
-Outputs a summary of hours logged to Jira issues over a given timespan.  This is a simple free alternative to [Tempo Timesheets](https://tempo.io/products/tempo-timesheets)
+Outputs a summary of hours logged to Jira issues over a given timespan.  This is a simple free alternative to [Tempo Timesheets](https://tempo.io/products/tempo-timesheets).
 
 ```
 php ./jira-worklog.php [options]
 
   -f str  from date string, anything that can be parsed by strtotime(). REQUIRED.
   -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'today'.
+  -u usrs filter worklogs to only include ones matching jira users. Comma separate usernames in usrs.
   -o out  output format, specify one of: txt, json, html.  Optional, default is txt.
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is ./jira-config.php
@@ -22,11 +29,15 @@ php ./jira-worklog.php [options]
 
 Examples:
 
-php ./jira-worklog.php -f='-7 days'                 # the last 7 days
-php ./jira-worklog.php -f='-7 days'  -k='CN-12'     # the last 7 days, and post comment to CN-12
-php ./jira-worklog.php -f='2017-1-1' -t='2017-1-1'  # just new years day 2017
-php ./jira-worklog.php -f='2017-1'   -t='2017-3'    # Q1 of 2017
+php ./jira-worklog.php -f='-7 days'                # summarize worklogs over the last 7 days
+php ./jira-worklog.php -f='-7 days' -u=chad,jo     # the last 7 days, only users chad and jo
+php ./jira-worklog.php -f='-7 days' -k=CN-12       # the last 7 days, and post comment to CN-12
+php ./jira-worklog.php -f='-7 days' -o=json        # the last 7 days, output in json
+php ./jira-worklog.php -f=2017-1-1  -t=2017-1-1    # just new years day 2017
+php ./jira-worklog.php -f=2017-1    -t=2017-3      # Q1 of 2017
 ```
+
+### Example outputs
 
 Example of summarizing all time logged from beginning of current month to today for all users
 ```
@@ -78,13 +89,42 @@ Daily Worklogs:
 real 2.040  user 0.338  sys 0.031 pcpu 18.10
 ```
 
+Here's an example of checking 2 users over 2 days, verbose output (shows curl calls), and updating CN-146 via POST with worklog summary comment. You can see text output below as well as view the [json output](jira-worklog.json) which was generated with same options except `-o=json` at end.
+
+```
+php ./jira-worklog.php  -f='-2 days' -u=chad,jo -k=CN-156 -v
+
+curl: err= 205ms 200 GET 0 36231 https://jira.example.com/rest/api/2/search?maxResults=999&jql=worklogDate%3E%3D2017-10-03+AND+worklogDate%3C%3D2017-10-05+ORDER+BY+key+ASC
+curl: err= 165ms 200 GET 0 1537 https://jira.example.com/rest/api/2/issue/CN-117/worklog
+curl: err= 150ms 200 GET 0 1509 https://jira.example.com/rest/api/2/issue/CN-130/worklog
+curl: err= 149ms 200 GET 0 5972 https://jira.example.com/rest/api/2/issue/CN-133/worklog
+curl: err= 139ms 200 GET 0 5897 https://jira.example.com/rest/api/2/issue/CN-146/worklog
+curl: err= 160ms 200 GET 0 1487 https://jira.example.com/rest/api/2/issue/CN-153/worklog
+curl: err= 230ms 201 POST 0 1944 https://jira.example.com/rest/api/2/issue/CN-146/comment
+
+19h Total Time logged, from 2017-10-03 Tue to 2017-10-05 Thu
+only by these users: chad, jo
+ as of 2017-10-05 Thu 9:17am CDT
+
+Total logged per issue:
+  30m CN-117 Better Frames for art to hang.
+  30m CN-130 Print pictures, posters
+  15m CN-133 Random Github work
+17.5h CN-146 jira-worklog.php
+  15m CN-153 Fix dropped SSH connections to Tatanka
+
+Daily Worklogs:
+  6h Tue 2017-10-03 -- 30m CN-117, 30m CN-130, 15m CN-133, 4.5h CN-146, 15m CN-153
+ 13h Wed 2017-10-04 -- 13h CN-146
+```
+
 ### Todo
 
-+ make sure cmd-line works and web interface work
-+ support text, html, or json output
-- add support for filtering by jira user
-- support case where worklogs are in more than 999 jira issues
-- improve html output
-- add csv output
-- add phpunit tests, lint
+- [x] make sure cmd-line works and web interface work
+- [x] support text, html, or json output
+- [x] add support for filtering by jira user
+- [ ] support case where worklogs are in more than 999 jira issues
+- [ ] improve html output
+- [ ] add csv output
+- [ ] add phpunit tests, lint
 
