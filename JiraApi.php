@@ -107,8 +107,8 @@ class JiraApi
             $msg .= $this->config['apiBaseUrl'] . "/secure/admin/user/UserBrowser.jspa\n\n";
             throw new Exception("cURL expected HTTP 200, got $httpcode\n$msg");
 
-        } elseif (200 != $httpcode) {
-            throw new Exception("cURL expected HTTP 200, got $httpcode");
+        } elseif (300 <= $httpcode) {
+            throw new Exception("cURL expected HTTP 2xx, got $httpcode");
 
         } else {
             if ('GET'==$type && $this->config['useLocalJiraCache']) {
@@ -134,7 +134,7 @@ class JiraApi
     }
 
     /**
-     * Change Jira data to a simple array of requested fields and their values (adapter pattern).
+     * Change Jira data to a flattened array of requested fields and their values (adapter pattern).
      * Basically a wrapper around getIssueFields()
      *
      * @param  array  $tickets array of isssues or one issue, from Jira API
@@ -143,7 +143,7 @@ class JiraApi
      *                if $tickets is multiple issues, array has issueKey as keys, value is as if $tickets
      *                is a single issue.
      */
-    public function getFields($tickets, $fields) {
+    public function getFlattenedIssues($tickets, $fields) {
         if ("string" == gettype($tickets)) {
             $tkt = json_decode($tickets, true);
         } else if ("object" == gettype($tickets)) {
@@ -214,6 +214,19 @@ class JiraApi
         } else {
             $json_indented_by_2 = preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json_indented_by_4);
             return $json_indented_by_2;
+        }
+    }
+
+    /**
+     * shortcut to validate variable types, throws an Exception if does not match
+     * 
+     * @param  string $type should be one of return strings from gettype()
+     * @param  mixed  $x    any variable
+     */
+    public function requireType($type, $x)
+    {
+        if ($type != gettype($x)) {
+            throw new Exception(gettype($x) ." was passed, expected $type");
         }
     }
 

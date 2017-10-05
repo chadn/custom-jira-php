@@ -30,7 +30,7 @@ Examples:
 USAGEOF;
 $usageCLI = <<<USAGE1CLI
 
-$me -f='-7 days'                # the last 7 days
+$me -f='-7 days'                # summarize worklogs over the last 7 days
 $me -f='-7 days' -u=chad,jo     # the last 7 days, only users chad and jo
 $me -f='-7 days' -k=CN-12       # the last 7 days, and post comment to CN-12
 $me -f='-7 days' -o=json        # the last 7 days, output in json 
@@ -40,7 +40,7 @@ $me -f=2017-1    -t=2017-3      # Q1 of 2017
 USAGE1CLI;
 $usageWeb = <<<USAGE2WEB
 
-<a href="$me?f=-7+days"            >$me?f=-7+days</a>              # the last 7 days
+<a href="$me?f=-7+days"            >$me?f=-7+days</a>              # summarize worklogs over the last 7 days
 <a href="$me?f=-7+days&u=chad,jo"  >$me?f=-7+days&u=chad,jo</a>    # the last 7 days, only users chad and jo
 <a href="$me?f=-7+days&k=CN-12"    >$me?f=-7+days&k=CN-12</a>      # the last 7 days, and post comment to CN-12
 <a href="$me?f=-7+days&o=json"     >$me?f=-7+days&o=json</a>       # the last 7 days, output in json
@@ -90,11 +90,11 @@ if (1 === preg_match("/(\d\d\d\d-)(\d\d?)$/", $toDateInput)) {
 
 $jw = new JiraWorklog($cfg);
 $jw->getJiraIssues($fromDateInput, $toDateInput, $usernames);
-echo $jw->getOutput($outfmt);
 
 if ($jiraKey) {
     $jw->postComment($jiraKey);
 }
+echo $jw->getOutput($outfmt);
 
 
 
