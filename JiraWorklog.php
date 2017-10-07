@@ -121,7 +121,7 @@ class JiraWorklog extends JiraApi
             
             $this->updateWorklogDailyTotal($key);
         }
-
+        uksort($this->dailyTotal, array('JiraWorklog', 'mySortByDateStr') );
         $this->total['timespentPretty'] = $this->roundit($this->total['timespentSecs']);
 
         $this->res = [
@@ -398,4 +398,9 @@ class JiraWorklog extends JiraApi
         return sprintf($fmt, round($x / (60 * 6))/10 . "h");
     }
 
+    static function mySortByDateStr($a, $b) {
+        return strtotime($a) - strtotime($b);
+    }
+
 }
+
