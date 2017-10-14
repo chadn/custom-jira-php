@@ -7,8 +7,11 @@ $cfgFile = './jira-config.php';
 // Determine if command-line-interface or web interface
 $isCli = php_sapi_name() == 'cli'; 
 
-$url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
-$me = $isCli ? "php " . $argv[0] : $url;
+if ($isCli) {
+  $me = "php " . $argv[0];
+} else {
+  $me = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
+}
 $outfmt = $isCli ? 'txt' : 'html';
 
 $usage = <<<USAGEOF
@@ -61,24 +64,24 @@ if ($isCli) {
     // allow options from  $_GET, $_POST and $_COOKIE
     $options = &$_REQUEST;
 }
-if (isset($options[h]) || !array_key_exists('f', $options)) {
+if (@isset($options[h]) || !array_key_exists('f', $options)) {
     echo $usage;
     exit;
 }
 
 $fromDateInput = $options['f'];
-$toDateInput   = $options['t'] ?: 'today';  // ternary shorthand
-$jiraKey       = $options['k'] ?: '';
-$usernames     = $options['u'] ?: '';
-$outfmt        = $options['o'] ?: $outfmt;
-$cfgFile       = $options['c'] ?: $cfgFile;
+$toDateInput   = @$options['t'] ?: 'today';  // ternary shorthand
+$jiraKey       = @$options['k'] ?: '';
+$usernames     = @$options['u'] ?: '';
+$outfmt        = @$options['o'] ?: $outfmt;
+$cfgFile       = @$options['c'] ?: $cfgFile;
 
 $cfg = loadcfg($cfgFile);
 
-if (isset($options[v])) {
+if (@isset($options[v])) {
   $cfg['echoTiming'] = true;
 }
-if (isset($options[d])) {
+if (@isset($options[d])) {
   $cfg['debug'] = true;
 }
 

@@ -71,6 +71,8 @@ class JiraWorklog extends JiraApi
 
         if ($usernames) {
             $this->req['usernames'] = explode(',', $usernames);
+        } else {
+            $this->req['usernames'] = [];
         }
 
         $fromDateJQL = date('Y-m-d', $this->fromEpoch); 
@@ -220,6 +222,9 @@ class JiraWorklog extends JiraApi
                 $this->dailyTotal[$dateStr]['authors'] = $users;
             }
             $this->dailyTotal[$dateStr]['totalSecs'] += $secs;
+            if (!array_key_exists($key, $this->dailyTotal[$dateStr] )) {
+                $this->dailyTotal[$dateStr][$key] = 0;
+            } 
             $this->dailyTotal[$dateStr][$key] += $secs;
 
         }
