@@ -47,25 +47,26 @@ time php custom-jira-php/jira-worklog.php -f='first day of this month'
  as of 2017-09-22 Fri 2:36pm CDT
 
 Total logged per issue:
-   6h CN-4 Easily Restore, Restart, JIRA
-   5h CN-8 upgrade Postgres, JIRA, Bitbucket
-  15m CN-15 Fix dropbox
-  16h CN-29 Blog posts
-  30m CN-33 Books to read
-  10m CN-99 Android Music Player: Pi, Jet Audio
-   2h CN-100 SPP Financials
-   2h CN-110 One wheel skateboard
-   9h CN-124 Buy gifts
- 1.5h CN-125 New backup harddrive 
-   1h CN-128 Debug git client asking for password
-  10h CN-133 Random Github work
-  45m CN-135 Save only front door images where there is change
- 1.3h CN-138 Single Speed Brown Bike Maintenance
-   3h CN-139 Fix garage door
-  20m CN-141 SPP Random Work
-   1h CN-142 Switch to ATT Fiber
-  30m CN-143 Cancel credit cards
-   3h CN-144 Volunteer and Non-profit Work
+   6h CN-4 Easily Restore, Restart, JIRA (6h 9/6)
+   5h CN-8 upgrade Postgres, JIRA, Bitbucket (3h 9/15, 1h 9/19, 1h 9/20)
+  15m CN-15 Fix dropbox (15m 9/14)
+  16h CN-29 Blog posts (3h 9/5, 1h 9/7, 4h 9/8, 2h 9/9, 6h 9/11)
+  30m CN-33 Books to read (30m 9/10)
+  10m CN-99 Android Music Player: Pi, Jet Audio (10m 9/21)
+   2h CN-100 SPP Financials (1h 9/1, 1h 9/3)
+   2h CN-110 One wheel skateboard (2h 9/2)
+   9h CN-124 Buy gifts (3h 9/1, 6h 9/15)
+ 1.5h CN-125 New backup harddrive (1h 9/3, 30m 9/6)
+   1h CN-128 Debug git client asking for password (1h 9/8)
+  10h CN-133 Random Github work (8h 9/13, 1h 9/19, 1h 9/20)
+  45m CN-135 Save only front door images where there is change (45m 9/13)
+ 1.3h CN-138 Single Speed Brown Bike Maintenance (1h 9/15, 15m 9/19)
+   3h CN-139 Fix garage door (1.5h 9/8, 1.5h 9/18)
+  20m CN-141 SPP Random Work (20m 9/19)
+   1h CN-142 Switch to ATT Fiber (1h 9/19)
+  30m CN-143 Cancel credit cards (30m 9/21)
+   3h CN-144 Volunteer and Non-profit Work (2h 9/20, 1h 9/21)
+
 
 Daily Worklogs:
   4h Fri 2017-09-01 -- 1h CN-100, 3h CN-124

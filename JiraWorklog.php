@@ -22,8 +22,16 @@ class JiraWorklog extends JiraApi
         'dailyTotalDateFmt' => 'D Y-m-d', // Fri 2017-08-11
         'outputDateFmt'     => 'Y-m-d D', // used in Total Time logged summary, from DATE to DATE
         'asOfDateFmt'      => 'Y-m-d D g:ia T', // used in Total Time logged summary 
-        'jsonIssueFields' => ['summary', 'timespentPretty'],
-        'displayFields' => ['timespentPretty', 'key','summary']
+        'jsonIssueFields' => [  // fields used for json output, under res->issues
+            'summary',          // issue summary, exactly like it is in jira
+            'timespentPretty'   // Computed human-friendly short string of hours or minutes.  example: 15m
+            ],
+        'loggedPerIssueFields' => [ // order of fields used for one line summary under "Total logged per issue"
+            'timespentPretty',      // same as in jsonIssueFields
+            'key',                  // issue key
+            'summary',              // same as in jsonIssueFields, must exist there to work here
+            'dailySummary'          // computed. example: (15m 2/4, 2h 2/5, 5.5h 2/7)
+            ]
     ];
 
     /**
@@ -251,6 +259,23 @@ class JiraWorklog extends JiraApi
         return $txtStr;
     }
 
+    /**
+     * pretty Print Issue's time spent on each day,  
+     * 
+     * @param  string $key  issue key
+     * @return array  summary of time spent per issue each day, one day per array value
+     */
+    public function prettyPrintIssueDaily($key) 
+    {
+        $ret = [];
+        foreach ($this->dailyTotal as $dateStr => $dt) {
+            if (!array_key_exists($key, $dt)) continue;
+            $ret[] = $this->roundit($dt[$key]) . date(' n/j', strtotime($dateStr) );
+        }
+        return $ret;
+    }
+
+
 
     /**
      * pretty Print Worklog Issues 
@@ -261,10 +286,19 @@ class JiraWorklog extends JiraApi
     {
         $txtStr = "Total logged per issue:\n";
         foreach ($this->res['issues'] as $key => $tkt) {
-            foreach ($this->config['displayFields'] as $f) {
-                $txtStr .= ('key' == $f ? $key : $tkt[$f]) ." ";
+            $txtFlds = [];
+            foreach ($this->config['loggedPerIssueFields'] as $f) {
+                if ('dailySummary' == $f) {
+                    $txtFlds[] = "(" . implode(', ', $this->prettyPrintIssueDaily($key)) . ")";
+                } else if ('key' == $f) {
+                    $txtFlds[] = $key;
+                } else if (array_key_exists($f, $tkt)) {
+                    $txtFlds[] = $tkt[$f];
+                } else {
+                    throw new Exception("unknown field ($f) in config['loggedPerIssueFields']");
+                }
             }
-            $txtStr .= "\n";
+            $txtStr .= implode(' ', $txtFlds) . "\n";
         }
         return $txtStr;
     }
