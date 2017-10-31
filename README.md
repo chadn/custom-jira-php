@@ -23,6 +23,7 @@ php ./jira-worklog.php [options]
   -o out  output format, specify one of: txt, json, html.  Optional, default is txt.
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is ./jira-config.php
+  -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
   -v      verbose output, including basic timing info with API.
   -d      debug output - warning - this contains a ton of information.
   -h      show this help and exit.

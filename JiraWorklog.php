@@ -57,9 +57,11 @@ class JiraWorklog extends JiraApi
      *
      * @param  string|int  $fromDateInput look at jira issues after this date
      * @param  string|int  $toDateInput   look at jira issues before this date
+     * @param  string      $usernames comma separated list of 1 or more usernames
+     * @param  string      $jql       unencoded jql to further refine which issues will be checked
      * @return JiraWorklog $this (chainable)
      */
-    public function getJiraIssues($fromDateInput, $toDateInput, $usernames='')
+    public function getJiraIssues($fromDateInput, $toDateInput, $usernames='', $jql='')
     {
         if ("string" === gettype($fromDateInput)) {
             $this->fromEpoch = strtotime($fromDateInput);
@@ -82,10 +84,18 @@ class JiraWorklog extends JiraApi
         } else {
             $this->req['usernames'] = [];
         }
+        if ($jql) {
+            if (0===preg_match('/^\s*AND/i', $jql)) {
+                $jql = "AND ($jql)";
+            } else {
+                $jql = "($jql)";
+            }
+        }
 
+        
         $fromDateJQL = date('Y-m-d', $this->fromEpoch); 
         $toDateJQL   = date('Y-m-d', $this->toEpoch); 
-        $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL ORDER BY key ASC";
+        $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL $jql ORDER BY key ASC";
         $this->req['fromDateInput'] = $fromDateInput;
         $this->req['toDateInput']   = $toDateInput;
         $this->req['fromEpoch'] = $this->fromEpoch;
