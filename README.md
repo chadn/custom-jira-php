@@ -25,7 +25,7 @@ php ./jira-worklog.php [options]
   -c fn   config file, where you store apiCredentials. Optional, default is ./jira-config.php
   -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
   -v      verbose output, including basic timing info with API.
-  -d      debug output - warning - this contains a ton of information.
+  -d      debug output - VERY verbose, including "all worklog authors" (jira usernames for -u).
   -h      show this help and exit.
 
 Examples:

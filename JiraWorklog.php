@@ -6,6 +6,7 @@ class JiraWorklog extends JiraApi
 {
     public $req;          // request object, used for output
     public $res;          // result object, used for output
+    public $allAuthors;   // object, key is authors
     private $fromEpoch;   // number of seconds since epoch
     private $toEpoch;     // number of seconds since epoch
     private $total;       // array of daily totals
@@ -92,7 +93,7 @@ class JiraWorklog extends JiraApi
             }
         }
 
-        
+        $this->allAuthors = [];  
         $fromDateJQL = date('Y-m-d', $this->fromEpoch); 
         $toDateJQL   = date('Y-m-d', $this->toEpoch); 
         $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL $jql ORDER BY key ASC";
@@ -151,6 +152,11 @@ class JiraWorklog extends JiraApi
             'dailyTotal'        => $this->dailyTotal,
             'issues'            => $flattenedIssues
         ];
+        if ($this->config['debug']) {
+            $allAuthors = array_keys($this->allAuthors);
+            sort($allAuthors);
+            $this->dbg("all worklog authors: " . implode(",", $allAuthors) . "\n"); 
+        }
         return $this;
     }
 
@@ -177,6 +183,7 @@ class JiraWorklog extends JiraApi
 
         foreach ($ret['worklogs'] as $entry) {
             $startedEpoch = strtotime($entry['started']);
+            $this->allAuthors[$entry['author']['name']] = 1;
 
             if ($startedEpoch >= $fromEpoch && $startedEpoch <= $toEpoch) {
 
