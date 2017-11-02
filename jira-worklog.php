@@ -1,6 +1,9 @@
 <?php
+require_once 'src/JiraApi.php';
+require_once 'src/JiraWorklog.php';
 
-include 'JiraWorklog.php';
+//use Norhaus\JiraApi;
+use Norhaus\JiraWorklog;
 
 $cfgFile = './jira-config.php';
 

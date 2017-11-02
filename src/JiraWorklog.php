@@ -1,6 +1,7 @@
 <?php
+namespace Norhaus;
 
-include 'JiraApi.php';
+use Norhaus\JiraApi;
 
 class JiraWorklog extends JiraApi
 {
@@ -142,7 +143,7 @@ class JiraWorklog extends JiraApi
             
             $this->updateWorklogDailyTotal($key);
         }
-        uksort($this->dailyTotal, array('JiraWorklog', 'mySortByDateStr') );
+        uksort($this->dailyTotal, array('Norhaus\JiraWorklog', 'mySortByDateStr') );
         $this->total['timespentPretty'] = $this->roundit($this->total['timespentSecs']);
 
         $this->res = [
@@ -440,8 +441,8 @@ class JiraWorklog extends JiraApi
      *   Return human readable time (hours, mins) given seconds.  Ex: 7200 -> 2h, 900 -> 15m 
      *   
      * @param  integer  $x number of seconds  
-     * @param  string   $fmt issue key
-     * @return string    
+     * @param  string   $fmt format for sprintf, defaults to string with no whitespaces
+     * @return string   human readable time in minutes (m) or hours (h)
      */
     public function roundit($x, $fmt='%s') 
     {

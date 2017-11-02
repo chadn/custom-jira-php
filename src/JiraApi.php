@@ -1,5 +1,5 @@
 <?php
-
+namespace Norhaus;
 
 class JiraApi
 {

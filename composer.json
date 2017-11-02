@@ -1,0 +1,21 @@
+{
+    "require": {
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Norhaus\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Norhaus\\": "src/",
+            "Norhaus\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    }
+}

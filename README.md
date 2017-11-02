@@ -4,11 +4,11 @@
 
 This repo contains php scripts that use Jira's REST API
 
-- [JiraApi.php](JiraApi.php) - PHP Class and adapter for Jira API
-- [JiraWorklog.php](JiraWorklog.php) - PHP Class to handle parsing and summarizing jira worklogs
+- [src/JiraApi.php](src/JiraApi.php) - PHP Class and adapter for Jira API
+- [src/JiraWorklog.php](src/JiraWorklog.php) - PHP Class to handle parsing and summarizing jira worklogs
 - [jira-worklog.php](jira-worklog.php) - wrapper for JiraWorklog.php, provides web and command line interface (cli)
-- [jira-worklog.json](jira-worklog.json) - example json output for jira-worklog.php
 - [jira-config.php](jira-config.php) - config file for jira-worklog.php, update this with your Jira API password.
+- [tests/jira-worklog.json](tests/jira-worklog.json) - example json output for jira-worklog.php
 
 ## jira-worklog.php
 
@@ -128,5 +128,6 @@ Daily Worklogs:
 - [ ] support case where worklogs are in more than 999 jira issues
 - [ ] improve html output
 - [ ] add csv output
-- [ ] add phpunit tests, lint
+- [x] add basic phpunit tests
+- [ ] mock Jira API with phpunit
 
