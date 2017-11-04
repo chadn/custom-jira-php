@@ -23,7 +23,7 @@ class JiraWorklog extends JiraApi
         'skipEmptyWorklogs' => true,  // if true, json output will only include days with worklogs
         'dailyTotalDateFmt' => 'D Y-m-d', // Fri 2017-08-11
         'outputDateFmt'     => 'Y-m-d D', // used in Total Time logged summary, from DATE to DATE
-        'asOfDateFmt'      => 'Y-m-d D g:ia T', // used in Total Time logged summary 
+        'asOfDateFmt'      => 'Y-m-d D g:ia T', // used in Total Time logged summary
         'jsonIssueFields' => [  // fields used for json output, under res->issues
             'summary',          // issue summary, exactly like it is in jira
             'timespentPretty'   // Computed human-friendly short string of hours or minutes.  example: 15m
@@ -38,11 +38,11 @@ class JiraWorklog extends JiraApi
 
     /**
      * Can pass any config options from jwConfig or JiraApi's config
-     *  
+     *
      * @param  array   $cfg array of options
      * @return JiraApi $this (chainable)
      */
-    function __construct($cfg) 
+    public function __construct($cfg)
     {
         $this->setConfig($this->jwConfig);
         parent::__construct($cfg);
@@ -68,7 +68,7 @@ class JiraWorklog extends JiraApi
         if ("string" === gettype($fromDateInput)) {
             $this->fromEpoch = strtotime($fromDateInput);
         } elseif ("integer" === gettype($fromDateInput)) {
-            $this->fromEpoch = $fromDateInput;            
+            $this->fromEpoch = $fromDateInput;
         } else {
             throw new Exception("invalid type for fromDateInput, must be string or integer");
         }
@@ -76,7 +76,7 @@ class JiraWorklog extends JiraApi
         if ("string" === gettype($toDateInput)) {
             $this->toEpoch = strtotime($toDateInput);
         } elseif ("integer" === gettype($toDateInput)) {
-            $this->toEpoch = $toDateInput;            
+            $this->toEpoch = $toDateInput;
         } else {
             throw new Exception("invalid type for fromDateInput, must be string or integer");
         }
@@ -94,18 +94,18 @@ class JiraWorklog extends JiraApi
             }
         }
 
-        $this->allAuthors = [];  
-        $fromDateJQL = date('Y-m-d', $this->fromEpoch); 
-        $toDateJQL   = date('Y-m-d', $this->toEpoch); 
+        $this->allAuthors = [];
+        $fromDateJQL = date('Y-m-d', $this->fromEpoch);
+        $toDateJQL   = date('Y-m-d', $this->toEpoch);
         $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL $jql ORDER BY key ASC";
         $this->req['fromDateInput'] = $fromDateInput;
         $this->req['toDateInput']   = $toDateInput;
         $this->req['fromEpoch'] = $this->fromEpoch;
         $this->req['toEpoch']   = $this->toEpoch;
 
-        $apiResponse = $this->apiCall( 'search?maxResults=999&jql=' . urlencode($this->req['jql']), 'GET');
+        $apiResponse = $this->apiCall('search?maxResults=999&jql=' . urlencode($this->req['jql']), 'GET');
 
-        if (!$apiResponse)  {
+        if (!$apiResponse) {
             throw new Exception("bad response from API server");
         }
         $this->jiraIssues = json_decode($apiResponse, true);
@@ -117,13 +117,13 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * Builds array data for output using most recent worklog request. 
-     * 
+     * Builds array data for output using most recent worklog request.
+     *
      * @return JiraWorklog $this (chainable)
      */
-    public function prepOutput() 
+    public function prepOutput()
     {
-        if (!$this->jiraIssues)  {
+        if (!$this->jiraIssues) {
             throw new Exception("must call getJiraIssues() first");
         }
 
@@ -135,7 +135,6 @@ class JiraWorklog extends JiraApi
         $flattenedIssues = $this->getFlattenedIssues($this->jiraIssues, $this->config['jsonIssueFields']);
 
         foreach ($flattenedIssues as $key => $tkt) {
-
             $secs = $this->getWorklogTotal($key, $this->fromEpoch, $this->toEpoch);
             
             $this->total['timespentSecs'] += $secs;
@@ -143,7 +142,7 @@ class JiraWorklog extends JiraApi
             
             $this->updateWorklogDailyTotal($key);
         }
-        uksort($this->dailyTotal, array('Norhaus\JiraWorklog', 'mySortByDateStr') );
+        uksort($this->dailyTotal, array('Norhaus\JiraWorklog', 'mySortByDateStr'));
         $this->total['timespentPretty'] = $this->roundit($this->total['timespentSecs']);
 
         $this->res = [
@@ -156,29 +155,29 @@ class JiraWorklog extends JiraApi
         if ($this->config['debug']) {
             $allAuthors = array_keys($this->allAuthors);
             sort($allAuthors);
-            $this->dbg("all worklog authors: " . implode(",", $allAuthors) . "\n"); 
+            $this->dbg("all worklog authors: " . implode(",", $allAuthors) . "\n");
         }
         return $this;
     }
 
 
     /**
-     * Returns total seconds worked between fromEpoch toEpoch by examining all worklogs 
-     * 
+     * Returns total seconds worked between fromEpoch toEpoch by examining all worklogs
+     *
      * @param  string   $key        issue key
      * @param  integer  $fromEpoch  starting from this date, in seconds since epoch
      * @param  integer  $toEpoch    ending at this date, in seconds since epoch
-     * @param  string   $author     if not empty, only count worklogs made by this author 
-     * @return integer  $totalSecs 
+     * @param  string   $author     if not empty, only count worklogs made by this author
+     * @return integer  $totalSecs
      */
-    public function getWorklogTotal($key, $fromEpoch, $toEpoch, $author='') 
+    public function getWorklogTotal($key, $fromEpoch, $toEpoch, $author='')
     {
         $dbg = $this->config['debug'];
         $totalSecs = 0;
 
         # get the full worklog for that issue
         //$ret = json_decode(apiCall("issue/$key/worklog"), true);
-        $ret = json_decode($this->apiCall("issue/$key/worklog",'GET'), true);
+        $ret = json_decode($this->apiCall("issue/$key/worklog", 'GET'), true);
 
         $this->dbg("getWorklogTotal($key) fromEpoch=$fromEpoch toEpoch=$toEpoch ");
 
@@ -187,7 +186,6 @@ class JiraWorklog extends JiraApi
             $this->allAuthors[$entry['author']['name']] = 1;
 
             if ($startedEpoch >= $fromEpoch && $startedEpoch <= $toEpoch) {
-
                 if (!$author || ($author == $entry['author']['name'])) {
                     $totalSecs += $entry['timeSpentSeconds'];
                     $this->dbg("Using ");
@@ -205,18 +203,17 @@ class JiraWorklog extends JiraApi
 
     /**
      * updates $this->dailyTotal with worklog data
-     * 
+     *
      * @param  string $key Jira issue key
      */
-    public function updateWorklogDailyTotal($key) 
+    public function updateWorklogDailyTotal($key)
     {
-        // normalize $fromEpoch to be start of day - do not support partial day checks, 
+        // normalize $fromEpoch to be start of day - do not support partial day checks,
         // since many people create worklogs without paying attention to correct time
-        $fromEpoch2 = strtotime(date('Y-m-d', $this->fromEpoch)); 
+        $fromEpoch2 = strtotime(date('Y-m-d', $this->fromEpoch));
 
         // for each day between fromEpoch and toEpoch, get daily total
         for ($curTime = $fromEpoch2; $curTime <= $this->toEpoch; $curTime += 60*60*24) {
-
             $endTime = $curTime + 60*60*24; // one day increments
             $dateStr = date($this->config['dailyTotalDateFmt'], $curTime);
 
@@ -225,51 +222,60 @@ class JiraWorklog extends JiraApi
                 $secs = 0;
                 foreach ($this->req['usernames'] as $user) {
                     $usersecs = $this->getWorklogTotal($key, $curTime, $endTime, $user);
-                    if (0 === $usersecs && $this->config['skipEmptyWorklogs']) continue;
+                    if (0 === $usersecs && $this->config['skipEmptyWorklogs']) {
+                        continue;
+                    }
 
                     if (!array_key_exists($user, $users)) {
                         $users[$user] = ['totalSecs' => 0];
-                    } 
+                    }
                     $users[$user]['totalSecs'] += $usersecs;
                     $users[$user][$key] += $usersecs;
                     $secs += $usersecs;
                 }
-                if (0 === $secs && $this->config['skipEmptyWorklogs']) continue; 
+                if (0 === $secs && $this->config['skipEmptyWorklogs']) {
+                    continue;
+                }
             } else {
                 $secs = $this->getWorklogTotal($key, $curTime, $endTime);
-                if (0 === $secs && $this->config['skipEmptyWorklogs']) continue; 
+                if (0 === $secs && $this->config['skipEmptyWorklogs']) {
+                    continue;
+                }
             }
             
             if (!array_key_exists($dateStr, $this->dailyTotal)) {
                 $this->dailyTotal[$dateStr] = ['totalSecs' => 0];
                 //echo " ---- initialized dailyTotal $dateStr\n";
-            } 
+            }
             if ($this->req['usernames']) {
                 $this->dailyTotal[$dateStr]['authors'] = $users;
             }
             $this->dailyTotal[$dateStr]['totalSecs'] += $secs;
-            if (!array_key_exists($key, $this->dailyTotal[$dateStr] )) {
+            if (!array_key_exists($key, $this->dailyTotal[$dateStr])) {
                 $this->dailyTotal[$dateStr][$key] = 0;
-            } 
+            }
             $this->dailyTotal[$dateStr][$key] += $secs;
-
         }
     }
 
 
     /**
-     * pretty Print Worklog Daily Total 
-     * 
+     * pretty Print Worklog Daily Total
+     *
      * @return string summary of time spent per issue each day, one day per line
      */
-    public function prettyPrintWorklogDailyTotal() 
+    public function prettyPrintWorklogDailyTotal()
     {
         $txtStr = "Daily Worklogs:\n";
         foreach ($this->dailyTotal as $dateStr => $dt) {
-            if (0 === $dt['totalSecs']) continue;
+            if (0 === $dt['totalSecs']) {
+                continue;
+            }
             $tmpA = [];
             foreach ($dt as $key => $secs) {
-                if (0 == $secs || in_array($key, ['totalSecs','authors'])) continue;
+                if (0 == $secs || in_array($key, ['totalSecs','authors'])) {
+                    continue;
+                }
                 $tmpA[] = $this->roundit($secs) . " $key";
             }
             $txtStr .= $this->roundit($dt['totalSecs'], "%4s") . " $dateStr -- ". implode(', ', $tmpA) ."\n";
@@ -278,17 +284,19 @@ class JiraWorklog extends JiraApi
     }
 
     /**
-     * pretty Print Issue's time spent on each day,  
-     * 
+     * pretty Print Issue's time spent on each day,
+     *
      * @param  string $key  issue key
      * @return array  summary of time spent per issue each day, one day per array value
      */
-    public function prettyPrintIssueDaily($key) 
+    public function prettyPrintIssueDaily($key)
     {
         $ret = [];
         foreach ($this->dailyTotal as $dateStr => $dt) {
-            if (!array_key_exists($key, $dt)) continue;
-            $ret[] = $this->roundit($dt[$key]) . date(' n/j', strtotime($dateStr) );
+            if (!array_key_exists($key, $dt)) {
+                continue;
+            }
+            $ret[] = $this->roundit($dt[$key]) . date(' n/j', strtotime($dateStr));
         }
         return $ret;
     }
@@ -296,11 +304,11 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * pretty Print Worklog Issues 
-     * 
+     * pretty Print Worklog Issues
+     *
      * @return string summary of time spent per Jira issue, one issue per line
      */
-    public function prettyPrintWorklogIssues() 
+    public function prettyPrintWorklogIssues()
     {
         $txtStr = "Total logged per issue:\n";
         foreach ($this->res['issues'] as $key => $tkt) {
@@ -308,9 +316,9 @@ class JiraWorklog extends JiraApi
             foreach ($this->config['loggedPerIssueFields'] as $f) {
                 if ('dailySummary' == $f) {
                     $txtFlds[] = "(" . implode(', ', $this->prettyPrintIssueDaily($key)) . ")";
-                } else if ('key' == $f) {
+                } elseif ('key' == $f) {
                     $txtFlds[] = $key;
-                } else if (array_key_exists($f, $tkt)) {
+                } elseif (array_key_exists($f, $tkt)) {
                     $txtFlds[] = $tkt[$f];
                 } else {
                     throw new Exception("unknown field ($f) in config['loggedPerIssueFields']");
@@ -323,14 +331,14 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * pretty Print Worklog Summary 
-     * 
+     * pretty Print Worklog Summary
+     *
      * @return string summary of total time spent, including start and end time
      */
-    public function prettyPrintWorklogSummary() 
+    public function prettyPrintWorklogSummary()
     {
-        $fromDateOutput = date($this->config['outputDateFmt'], $this->fromEpoch);  
-        $toDateOutput   = date($this->config['outputDateFmt'], $this->toEpoch); 
+        $fromDateOutput = date($this->config['outputDateFmt'], $this->fromEpoch);
+        $toDateOutput   = date($this->config['outputDateFmt'], $this->toEpoch);
 
         $txtStr = $this->res['total']['timespentPretty'] . " Total Time logged, ";
         $txtStr .= "from $fromDateOutput to $toDateOutput\n";
@@ -345,45 +353,45 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * Returns string formatted as fmt from most recent worklog request. 
-     * 
+     * Returns string formatted as fmt from most recent worklog request.
+     *
      * @param  string $fmt output format, one of 'txt', 'html', 'json', 'jira'
-     * @return string  
+     * @return string
      */
-    public function getOutput($fmt) 
+    public function getOutput($fmt)
     {
         switch ($fmt) {
-            case 'json':  return $this->outputJson(); 
-            case 'html':  return $this->outputHtml(); 
-            case 'jira':  return $this->outputJiraComment(); 
-            case 'txt':   return $this->outputTxt(); 
-            default:      return $this->outputTxt(); 
+            case 'json':  return $this->outputJson();
+            case 'html':  return $this->outputHtml();
+            case 'jira':  return $this->outputJiraComment();
+            case 'txt':   return $this->outputTxt();
+            default:      return $this->outputTxt();
         }
     }
 
 
     /**
-     * Returns string formatted as json from most recent worklog request. 
-     * 
-     * @return string  
+     * Returns string formatted as json from most recent worklog request.
+     *
+     * @return string
      */
-    public function outputJson() 
+    public function outputJson()
     {
         header('Content-Type: application/json');
         $ret = [
             'req' => $this->req,
             'res' => $this->res
         ];
-        return $this->jsonPrettyPrint( $ret );
+        return $this->jsonPrettyPrint($ret);
     }
 
 
     /**
-     * Returns string formatted as text from most recent worklog request. 
-     * 
-     * @return string  
+     * Returns string formatted as text from most recent worklog request.
+     *
+     * @return string
      */
-    public function outputTxt() 
+    public function outputTxt()
     {
         $output = "\n". $this->prettyPrintWorklogSummary() . "\n";
         $output .= $this->prettyPrintWorklogIssues() . "\n";
@@ -392,11 +400,11 @@ class JiraWorklog extends JiraApi
     }
 
     /**
-     * Returns string formatted for Jira comment from most recent worklog request. 
-     * 
-     * @return string  
+     * Returns string formatted for Jira comment from most recent worklog request.
+     *
+     * @return string
      */
-    public function outputJiraComment() 
+    public function outputJiraComment()
     {
         $output = $this->prettyPrintWorklogSummary();
         $output .= "\n{code}\n" . $this->prettyPrintWorklogIssues() . "{code}\n";
@@ -406,11 +414,11 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * Returns string formatted for Jira comment from most recent worklog request. 
-     * 
-     * @return string  
+     * Returns string formatted for Jira comment from most recent worklog request.
+     *
+     * @return string
      */
-    public function outputHtml() 
+    public function outputHtml()
     {
         $output = "\n<pre>\n". $this->prettyPrintWorklogSummary() . "\n";
         $output .= "\n" . $this->prettyPrintWorklogIssues() . "\n";
@@ -420,12 +428,12 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * adds comment to Jira Issue with output from most recent worklog request. 
-     * 
+     * adds comment to Jira Issue with output from most recent worklog request.
+     *
      * @param  string   $key issue key
      * @return string   $ret json encoded output from api POST.
      */
-    public function postComment($key) 
+    public function postComment($key)
     {
         // POST /rest/api/2/issue/{issueIdOrKey}/comment
         // https://docs.atlassian.com/jira/REST/server/#api/2/issue-addComment
@@ -438,13 +446,13 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     *   Return human readable time (hours, mins) given seconds.  Ex: 7200 -> 2h, 900 -> 15m 
-     *   
-     * @param  integer  $x number of seconds  
+     *   Return human readable time (hours, mins) given seconds.  Ex: 7200 -> 2h, 900 -> 15m
+     *
+     * @param  integer  $x number of seconds
      * @param  string   $fmt format for sprintf, defaults to string with no whitespaces
      * @return string   human readable time in minutes (m) or hours (h)
      */
-    public function roundit($x, $fmt='%s') 
+    public function roundit($x, $fmt='%s')
     {
         $this->requireType('integer', $x);
         $this->requireType('string', $fmt);
@@ -455,9 +463,8 @@ class JiraWorklog extends JiraApi
         return sprintf($fmt, round($x / (60 * 6))/10 . "h");
     }
 
-    static function mySortByDateStr($a, $b) {
+    public static function mySortByDateStr($a, $b)
+    {
         return strtotime($a) - strtotime($b);
     }
-
 }
-

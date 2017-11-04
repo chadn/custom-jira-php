@@ -19,17 +19,18 @@ class JiraApi
 
     /**
      * set configuration options
-     * 
+     *
      * @param  array   $cfg array of options
      * @return JiraApi $this (chainable)
      */
-    function __construct($cfg) {
-       return $this->setConfig($cfg);
+    public function __construct($cfg)
+    {
+        return $this->setConfig($cfg);
     }
 
     /**
      * set configuration options
-     * 
+     *
      * @param  array   $cfg array of options
      * @return JiraApi $this (chainable)
      */
@@ -51,14 +52,13 @@ class JiraApi
      * @param  string|array   $data optional, can be json_encoded string or php array
      * @return array $json data object from API
      */
-    public function apiCall($command, $type='GET', $data=null) {
-
+    public function apiCall($command, $type='GET', $data=null)
+    {
         $cacheKey = $command;
         //$cacheKey = json_encode([$command, $data, $opt]);
 
         if ('GET'==$type && $this->config['useLocalJiraCache']
-            && array_key_exists($cacheKey, $this->localJiraCache))
-        {
+            && array_key_exists($cacheKey, $this->localJiraCache)) {
             //$this->dbg("apiCall() returning cached result for $cacheKey\n");
             //echo $config['apiCall.cache'][$cacheKey] ."\n";
             return $this->localJiraCache[$cacheKey];
@@ -101,15 +101,12 @@ class JiraApi
         }
         if ($ch_error) {
             throw new Exception("cURL Error: $ch_error");
-
         } elseif (403 == $httpcode) {
             $msg = "Common problem is too many failed login attempts.  Verify and reset here:\n";
             $msg .= $this->config['apiBaseUrl'] . "/secure/admin/user/UserBrowser.jspa\n\n";
             throw new Exception("cURL expected HTTP 200, got $httpcode\n$msg");
-
         } elseif (300 <= $httpcode) {
             throw new Exception("cURL expected HTTP 2xx, got $httpcode");
-
         } else {
             if ('GET'==$type && $this->config['useLocalJiraCache']) {
                 $this->localJiraCache[$cacheKey] = $result;
@@ -120,12 +117,13 @@ class JiraApi
     }
 
     /**
-     * retrieves json issue data from Jira API 
-     * 
+     * retrieves json issue data from Jira API
+     *
      * @param  string $key Jira issue key, ex: CN-123
-     * @return array  json issue data      
+     * @return array  json issue data
      */
-    public function getJiraIssueByKey($key) {
+    public function getJiraIssueByKey($key)
+    {
         $issue = json_decode(apiCall('issue/'.$key));
         if (!empty($issue->errorMessages) && count($issue->errorMessages) > 0) {
             throw new Exception("Cannot get issue $key: " . $issue->errorMessages[0]);
@@ -143,12 +141,13 @@ class JiraApi
      *                if $tickets is multiple issues, array has issueKey as keys, value is as if $tickets
      *                is a single issue.
      */
-    public function getFlattenedIssues($tickets, $fields) {
+    public function getFlattenedIssues($tickets, $fields)
+    {
         if ("string" == gettype($tickets)) {
             $tkt = json_decode($tickets, true);
-        } else if ("object" == gettype($tickets)) {
+        } elseif ("object" == gettype($tickets)) {
             $tkt = json_decode(json_encode($tickets), true);
-        } else if ("array" == gettype($tickets)) {
+        } elseif ("array" == gettype($tickets)) {
             $tkt = $tickets;
         } else {
             $tkt = null;
@@ -157,10 +156,10 @@ class JiraApi
         if (isset($tkt['issues'])) {
             foreach ($tkt['issues'] as $issue) {
                 $ret[ $issue['key'] ] = $this->getIssueFields($issue, $fields);
-             }
+            }
         } else {
             $ret = $this->getIssueFields($tkt, $fields);
-        } 
+        }
         return $ret;
     }
 
@@ -173,7 +172,8 @@ class JiraApi
      *                if $ticket is multiple issues, array has issueKey as keys, value is as if $ticket
      *                is a single issue.
      */
-    public function getIssueFields($ticket, $fields) {
+    public function getIssueFields($ticket, $fields)
+    {
         $ret = [];
         $nf = '<field-not-found>';
         if ("array" != gettype($ticket)) {
@@ -181,16 +181,16 @@ class JiraApi
         }
         foreach ($fields as $field) {
             if ($field == 'key') {
-                $ret[$field] = array_key_exists($field, $ticket) 
-                                ? $ticket[$field] 
+                $ret[$field] = array_key_exists($field, $ticket)
+                                ? $ticket[$field]
                                 : $nf;
-            } else if (in_array($field, ['resolution','creator','reporter','priority','status'])) {
-                $ret[$field] = array_key_exists($field, $ticket['fields']) 
-                                ? $ticket['fields'][$field]['name'] 
+            } elseif (in_array($field, ['resolution','creator','reporter','priority','status'])) {
+                $ret[$field] = array_key_exists($field, $ticket['fields'])
+                                ? $ticket['fields'][$field]['name']
                                 : $nf;
             } else {
-                $ret[$field] = array_key_exists($field, $ticket['fields']) 
-                                ? $ticket['fields'][$field] 
+                $ret[$field] = array_key_exists($field, $ticket['fields'])
+                                ? $ticket['fields'][$field]
                                 : $nf;
             }
             if (in_array($field, ['timespent','aggregatetimespent','timeoriginalestimate','aggregatetimeestimate'])) {
@@ -202,12 +202,13 @@ class JiraApi
 
     /**
      * Does json_encode with JSON_PRETTY_PRINT flag but allows 2-space indentation
-     * 
-     * @param  array|object  $mixed        php array 
+     *
+     * @param  array|object  $mixed        php array
      * @param  boolean       $indent_by_4  if true, indents by 4 spaces. If false, indents by 2
      * @return string                      json encoded string
      */
-    public function jsonPrettyPrint($mixed, $indent_by_4=false) {
+    public function jsonPrettyPrint($mixed, $indent_by_4=false)
+    {
         $json_indented_by_4 = json_encode($mixed, JSON_PRETTY_PRINT);
         if ($indent_by_4) {
             return $json_indented_by_4;
@@ -219,7 +220,7 @@ class JiraApi
 
     /**
      * shortcut to validate variable types, throws an Exception if does not match
-     * 
+     *
      * @param  string $type should be one of return strings from gettype()
      * @param  mixed  $x    any variable
      */
@@ -231,11 +232,10 @@ class JiraApi
     }
 
 
-    public function dbg($string) 
+    public function dbg($string)
     {
         if ($this->config['debug']) {
             echo $string;
         }
     }
-
 }
