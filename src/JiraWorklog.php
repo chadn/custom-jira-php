@@ -42,7 +42,7 @@ class JiraWorklog extends JiraApi
      * @param  array   $cfg array of options
      * @return JiraApi $this (chainable)
      */
-    public function __construct($cfg)
+    public function __construct($cfg=[])
     {
         $this->setConfig($this->jwConfig);
         parent::__construct($cfg);

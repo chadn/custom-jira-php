@@ -14,7 +14,7 @@ class JiraApi
         'useLocalJiraCache' => true
     ];
 
-    private $localJiraCache = [];
+    public $localJiraCache = [];
 
 
     /**
@@ -23,7 +23,7 @@ class JiraApi
      * @param  array   $cfg array of options
      * @return JiraApi $this (chainable)
      */
-    public function __construct($cfg)
+    public function __construct($cfg=[])
     {
         return $this->setConfig($cfg);
     }
@@ -66,11 +66,59 @@ class JiraApi
         //$this->dbg("apiCall() not returning cached result for $cacheKey\n");
 
         $url = $this->config['apiBaseUrl'] . '/rest/api/2/' . $command;
+
+        $start = microtime(true);
+
+        $ret = $this->curlWrapper($url, $type, $data);
+
+        $elapsedMs = round(1000*(microtime(true) - $start));
+
+        $ch_error = $ret['error'];
+        $httpcode = $ret['httpcode'];
+        $result   = $ret['result'];
+
+        if ($this->config['echoTiming']) {
+            echo "curl: err=$ch_error $elapsedMs" . "ms $httpcode $type ";
+            echo strlen($data) ." ". strlen($result) ." $url\n";
+        }
+        if ($ch_error) {
+            throw new Exception("cURL Error: $ch_error");
+        } elseif (403 == $httpcode) {
+            $msg = "Common problem is too many failed login attempts.  Verify and reset here:\n";
+            $msg .= $this->config['apiBaseUrl'] . "/secure/admin/user/UserBrowser.jspa\n\n";
+            throw new Exception("cURL expected HTTP 200, got $httpcode\n$msg");
+        } elseif (300 <= $httpcode) {
+            throw new Exception("cURL expected HTTP 2xx, got $httpcode");
+        } else {
+            if ('GET'==$type && $this->config['useLocalJiraCache']) {
+                $this->localJiraCache[$cacheKey] = $result;
+                $this->dbg("apiCall() caching result for $cacheKey\n");
+            }
+            return $result;
+        }
+    }
+
+
+    /**
+     * wrapper for curl
+     *
+     * re-architect this for async API requests - http://blog.programster.org/php-async-curl-requests
+     * http://guzzle.readthedocs.io/en/latest/quickstart.html#async-requests
+     *         $ret = $this->curlWrapper($url, $type, $data, $headers);
+     *         
+     * @param  string         $command used in URL, ex: issue/CN-2
+     * @param  string         $type GET, POST, PUT
+     * @param  string|array   $data optional, can be json_encoded string or php array
+     * @param  array          $headers 
+     * @return array          
+     */
+    public function curlWrapper($url, $type, $data=null)
+    {
         $headers = array(
             'Accept: application/json',
             'Content-Type: application/json'
         );
-        $start = microtime(true);
+
         $ch = curl_init();
         if ($this->config['debug']) {
             curl_setopt($ch, CURLOPT_VERBOSE, 1);
@@ -93,27 +141,11 @@ class JiraApi
         $ch_error = curl_error($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        $elapsedMs = round(1000*(microtime(true) - $start));
-
-        if ($this->config['echoTiming']) {
-            echo "curl: err=$ch_error $elapsedMs" . "ms $httpcode $type ";
-            echo strlen($datas) ." ". strlen($result) ." $url\n";
-        }
-        if ($ch_error) {
-            throw new Exception("cURL Error: $ch_error");
-        } elseif (403 == $httpcode) {
-            $msg = "Common problem is too many failed login attempts.  Verify and reset here:\n";
-            $msg .= $this->config['apiBaseUrl'] . "/secure/admin/user/UserBrowser.jspa\n\n";
-            throw new Exception("cURL expected HTTP 200, got $httpcode\n$msg");
-        } elseif (300 <= $httpcode) {
-            throw new Exception("cURL expected HTTP 2xx, got $httpcode");
-        } else {
-            if ('GET'==$type && $this->config['useLocalJiraCache']) {
-                $this->localJiraCache[$cacheKey] = $result;
-                $this->dbg("apiCall() caching result for $cacheKey\n");
-            }
-            return $result;
-        }
+        return [
+            'error' => $ch_error,
+            'httpcode' => $httpcode,
+            'result' => $result
+        ];
     }
 
     /**
