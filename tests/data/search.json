@@ -1,0 +1,1003 @@
+{
+  "expand": "schema,names",
+  "startAt": 0,
+  "maxResults": 999,
+  "total": 8,
+  "issues": [
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "10718",
+      "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/10718",
+      "key": "CN-117",
+      "fields": {
+        "issuetype": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10003",
+          "id": "10003",
+          "description": "The sub-task of the issue",
+          "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10316&avatarType=issuetype",
+          "name": "Sub-task",
+          "subtask": true,
+          "avatarId": 10316
+        },
+        "parent": {
+          "id": "10733",
+          "key": "CN-72",
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/10733",
+          "fields": {
+            "summary": " Photos for 2125 ",
+            "status": {
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+              "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+              "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+              "name": "Resolved",
+              "id": "5",
+              "statusCategory": {
+                "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                "id": 3,
+                "key": "done",
+                "colorName": "green",
+                "name": "Done"
+              }
+            },
+            "priority": {
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+              "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+              "name": "Medium",
+              "id": "3"
+            },
+            "issuetype": {
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+              "id": "10002",
+              "description": "A task that needs to be done.",
+              "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+              "name": "Task",
+              "subtask": false,
+              "avatarId": 10318
+            }
+          }
+        },
+        "components": [],
+        "timespent": 5400,
+        "timeoriginalestimate": null,
+        "description": "Need some frames for pictures.",
+        "project": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/project\/10000",
+          "id": "10000",
+          "key": "CN",
+          "name": "Chad's Norhaus",
+          "avatarUrls": {
+            "48x48": "https:\/\/jira.example.com\/secure\/projectavatar?avatarId=10324",
+            "24x24": "https:\/\/jira.example.com\/secure\/projectavatar?size=small&avatarId=10324",
+            "16x16": "https:\/\/jira.example.com\/secure\/projectavatar?size=xsmall&avatarId=10324",
+            "32x32": "https:\/\/jira.example.com\/secure\/projectavatar?size=medium&avatarId=10324"
+          }
+        },
+        "fixVersions": [],
+        "aggregatetimespent": 5400,
+        "resolution": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/resolution\/10000",
+          "id": "10000",
+          "description": "Work has been completed on this issue.",
+          "name": "Done"
+        },
+        "customfield_10005": "0|i001mf:",
+        "aggregatetimeestimate": 0,
+        "resolutiondate": "2017-10-05T21:03:57.000-0500",
+        "workratio": -1,
+        "summary": "Better Frames for art to hang.",
+        "lastViewed": null,
+        "watches": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-117\/watchers",
+          "watchCount": 2,
+          "isWatching": true
+        },
+        "creator": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=rest-api",
+          "name": "rest-api",
+          "key": "rest-api",
+          "emailAddress": "rest-api@gmail.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=32"
+          },
+          "displayName": "Generic REST API",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "subtasks": [],
+        "created": "2014-08-01T08:57:00.000-0500",
+        "reporter": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=rest-api",
+          "name": "rest-api",
+          "key": "rest-api",
+          "emailAddress": "rest-api@gmail.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=32"
+          },
+          "displayName": "Generic REST API",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "customfield_10000": null,
+        "aggregateprogress": {
+          "progress": 5400,
+          "total": 5400,
+          "percent": 100
+        },
+        "priority": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+          "name": "Medium",
+          "id": "3"
+        },
+        "labels": [
+          "trello2jira",
+          "updated-by-rest-api"
+        ],
+        "customfield_10004": null,
+        "environment": null,
+        "timeestimate": 0,
+        "aggregatetimeoriginalestimate": null,
+        "versions": [],
+        "duedate": null,
+        "progress": {
+          "progress": 5400,
+          "total": 5400,
+          "percent": 100
+        },
+        "issuelinks": [
+          {
+            "id": "11103",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/11103",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "outwardIssue": {
+              "id": "10737",
+              "key": "CN-100",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/10737",
+              "fields": {
+                "summary": "Picture for Evelyn",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/10008",
+                  "description": "",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/generic.png",
+                  "name": "Waiting",
+                  "id": "10008",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/2",
+                    "id": 2,
+                    "key": "new",
+                    "colorName": "blue-gray",
+                    "name": "To Do"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10001",
+                  "id": "10001",
+                  "description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/issuetypes\/story.svg",
+                  "name": "Story",
+                  "subtask": false
+                }
+              }
+            }
+          },
+          {
+            "id": "11102",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/11102",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "inwardIssue": {
+              "id": "11402",
+              "key": "CN-130",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11402",
+              "fields": {
+                "summary": "Print pictures, posters",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+                  "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+                  "name": "Resolved",
+                  "id": "5",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+                  "id": "10002",
+                  "description": "A task that needs to be done.",
+                  "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+                  "name": "Task",
+                  "subtask": false,
+                  "avatarId": 10318
+                }
+              }
+            }
+          }
+        ],
+        "votes": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-117\/votes",
+          "votes": 0,
+          "hasVoted": false
+        },
+        "assignee": null,
+        "updated": "2017-10-13T10:12:18.000-0500",
+        "status": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+          "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+          "name": "Resolved",
+          "id": "5",
+          "statusCategory": {
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Done"
+          }
+        }
+      }
+    },
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "11402",
+      "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11402",
+      "key": "CN-130",
+      "fields": {
+        "issuetype": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+          "id": "10002",
+          "description": "A task that needs to be done.",
+          "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+          "name": "Task",
+          "subtask": false,
+          "avatarId": 10318
+        },
+        "components": [],
+        "timespent": 3600,
+        "timeoriginalestimate": null,
+        "description": "Fedex 11x17 prints came out well - will use that.\r\n\r\nSummarize options for printing photos from 3x5 to posters 18x24 and bigger\r\n",
+        "project": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/project\/10000",
+          "id": "10000",
+          "key": "CN",
+          "name": "Chad's Norhaus",
+          "avatarUrls": {
+            "48x48": "https:\/\/jira.example.com\/secure\/projectavatar?avatarId=10324",
+            "24x24": "https:\/\/jira.example.com\/secure\/projectavatar?size=small&avatarId=10324",
+            "16x16": "https:\/\/jira.example.com\/secure\/projectavatar?size=xsmall&avatarId=10324",
+            "32x32": "https:\/\/jira.example.com\/secure\/projectavatar?size=medium&avatarId=10324"
+          }
+        },
+        "fixVersions": [],
+        "aggregatetimespent": 3600,
+        "resolution": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/resolution\/10000",
+          "id": "10000",
+          "description": "Work has been completed on this issue.",
+          "name": "Done"
+        },
+        "customfield_10005": "0|i003b3:",
+        "aggregatetimeestimate": 0,
+        "resolutiondate": "2017-10-05T21:16:10.000-0500",
+        "workratio": -1,
+        "summary": "Print pictures, posters",
+        "lastViewed": null,
+        "watches": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-130\/watchers",
+          "watchCount": 1,
+          "isWatching": true
+        },
+        "creator": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
+          "name": "chad",
+          "key": "chad",
+          "emailAddress": "chad@chadnorwood.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          },
+          "displayName": "Chad Norwood",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "subtasks": [],
+        "created": "2017-09-08T11:46:10.000-0500",
+        "reporter": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
+          "name": "chad",
+          "key": "chad",
+          "emailAddress": "chad@chadnorwood.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          },
+          "displayName": "Chad Norwood",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "customfield_10000": null,
+        "aggregateprogress": {
+          "progress": 3600,
+          "total": 3600,
+          "percent": 100
+        },
+        "priority": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+          "name": "Medium",
+          "id": "3"
+        },
+        "labels": [],
+        "customfield_10004": null,
+        "environment": null,
+        "timeestimate": 0,
+        "aggregatetimeoriginalestimate": null,
+        "versions": [],
+        "duedate": null,
+        "progress": {
+          "progress": 3600,
+          "total": 3600,
+          "percent": 100
+        },
+        "issuelinks": [
+          {
+            "id": "11102",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/11102",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "outwardIssue": {
+              "id": "10718",
+              "key": "CN-117",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/10718",
+              "fields": {
+                "summary": "Better Frames for art to hang.",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+                  "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+                  "name": "Resolved",
+                  "id": "5",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10003",
+                  "id": "10003",
+                  "description": "The sub-task of the issue",
+                  "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10316&avatarType=issuetype",
+                  "name": "Sub-task",
+                  "subtask": true,
+                  "avatarId": 10316
+                }
+              }
+            }
+          },
+          {
+            "id": "10703",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/10703",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "outwardIssue": {
+              "id": "11401",
+              "key": "CN-129",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11401",
+              "fields": {
+                "summary": "Learn Muscles - get poster?",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+                  "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+                  "name": "Resolved",
+                  "id": "5",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10003",
+                  "id": "10003",
+                  "description": "The sub-task of the issue",
+                  "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10316&avatarType=issuetype",
+                  "name": "Sub-task",
+                  "subtask": true,
+                  "avatarId": 10316
+                }
+              }
+            }
+          },
+          {
+            "id": "11108",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/11108",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "inwardIssue": {
+              "id": "10733",
+              "key": "CN-72",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/10733",
+              "fields": {
+                "summary": " Photos for 2125 ",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+                  "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+                  "name": "Resolved",
+                  "id": "5",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+                  "id": "10002",
+                  "description": "A task that needs to be done.",
+                  "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+                  "name": "Task",
+                  "subtask": false,
+                  "avatarId": 10318
+                }
+              }
+            }
+          }
+        ],
+        "votes": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-130\/votes",
+          "votes": 0,
+          "hasVoted": false
+        },
+        "assignee": null,
+        "updated": "2017-10-05T21:16:10.000-0500",
+        "status": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+          "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+          "name": "Resolved",
+          "id": "5",
+          "statusCategory": {
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Done"
+          }
+        }
+      }
+    },
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "11502",
+      "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11502",
+      "key": "CN-133",
+      "fields": {
+        "issuetype": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+          "id": "10002",
+          "description": "A task that needs to be done.",
+          "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+          "name": "Task",
+          "subtask": false,
+          "avatarId": 10318
+        },
+        "components": [],
+        "timespent": 36900,
+        "timeoriginalestimate": 28800,
+        "description": "Renamed custom-jira.js, see ...",
+        "project": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/project\/10000",
+          "id": "10000",
+          "key": "CN",
+          "name": "Chad's Norhaus",
+          "avatarUrls": {
+            "48x48": "https:\/\/jira.example.com\/secure\/projectavatar?avatarId=10324",
+            "24x24": "https:\/\/jira.example.com\/secure\/projectavatar?size=small&avatarId=10324",
+            "16x16": "https:\/\/jira.example.com\/secure\/projectavatar?size=xsmall&avatarId=10324",
+            "32x32": "https:\/\/jira.example.com\/secure\/projectavatar?size=medium&avatarId=10324"
+          }
+        },
+        "fixVersions": [],
+        "aggregatetimespent": 36900,
+        "resolution": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/resolution\/10000",
+          "id": "10000",
+          "description": "Work has been completed on this issue.",
+          "name": "Done"
+        },
+        "customfield_10005": "0|i003br:",
+        "aggregatetimeestimate": 0,
+        "resolutiondate": "2017-09-13T18:13:24.000-0500",
+        "workratio": 128,
+        "summary": "Add to Github: announcementBanner.js",
+        "lastViewed": null,
+        "watches": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-133\/watchers",
+          "watchCount": 1,
+          "isWatching": true
+        },
+        "creator": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
+          "name": "chad",
+          "key": "chad",
+          "emailAddress": "chad@chadnorwood.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          },
+          "displayName": "Chad Norwood",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "subtasks": [],
+        "created": "2017-09-12T16:09:58.000-0500",
+        "reporter": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
+          "name": "chad",
+          "key": "chad",
+          "emailAddress": "chad@chadnorwood.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          },
+          "displayName": "Chad Norwood",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "customfield_10000": "CN-36",
+        "aggregateprogress": {
+          "progress": 36900,
+          "total": 36900,
+          "percent": 100
+        },
+        "priority": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+          "name": "Medium",
+          "id": "3"
+        },
+        "labels": [],
+        "customfield_10004": null,
+        "environment": null,
+        "timeestimate": 0,
+        "aggregatetimeoriginalestimate": 28800,
+        "versions": [],
+        "duedate": null,
+        "progress": {
+          "progress": 36900,
+          "total": 36900,
+          "percent": 100
+        },
+        "issuelinks": [
+          {
+            "id": "10913",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/10913",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "outwardIssue": {
+              "id": "11610",
+              "key": "CN-146",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11610",
+              "fields": {
+                "summary": "Add to Github: jira-worklog.php",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+                  "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+                  "name": "Resolved",
+                  "id": "5",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10001",
+                  "id": "10001",
+                  "description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/issuetypes\/story.svg",
+                  "name": "Story",
+                  "subtask": false
+                }
+              }
+            }
+          },
+          {
+            "id": "10800",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/10800",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "inwardIssue": {
+              "id": "10313",
+              "key": "CN-24",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/10313",
+              "fields": {
+                "summary": "JIRA announcement banner Example",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/6",
+                  "description": "The issue is considered finished, the resolution is correct. Issues which are closed can be reopened.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/closed.png",
+                  "name": "Closed",
+                  "id": "6",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10001",
+                  "id": "10001",
+                  "description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/issuetypes\/story.svg",
+                  "name": "Story",
+                  "subtask": false
+                }
+              }
+            }
+          }
+        ],
+        "votes": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-133\/votes",
+          "votes": 0,
+          "hasVoted": false
+        },
+        "assignee": null,
+        "updated": "2017-10-03T21:27:29.000-0500",
+        "status": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+          "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+          "name": "Resolved",
+          "id": "5",
+          "statusCategory": {
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Done"
+          }
+        }
+      }
+    },
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "11610",
+      "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11610",
+      "key": "CN-146",
+      "fields": {
+        "issuetype": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10001",
+          "id": "10001",
+          "description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/issuetypes\/story.svg",
+          "name": "Story",
+          "subtask": false
+        },
+        "components": [],
+        "timespent": 83700,
+        "timeoriginalestimate": null,
+        "description": "Created [https:\/\/github.com\/chadn\/custom-jira-php] \r\n ",
+        "project": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/project\/10000",
+          "id": "10000",
+          "key": "CN",
+          "name": "Chad's Norhaus",
+          "avatarUrls": {
+            "48x48": "https:\/\/jira.example.com\/secure\/projectavatar?avatarId=10324",
+            "24x24": "https:\/\/jira.example.com\/secure\/projectavatar?size=small&avatarId=10324",
+            "16x16": "https:\/\/jira.example.com\/secure\/projectavatar?size=xsmall&avatarId=10324",
+            "32x32": "https:\/\/jira.example.com\/secure\/projectavatar?size=medium&avatarId=10324"
+          }
+        },
+        "fixVersions": [],
+        "aggregatetimespent": 83700,
+        "resolution": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/resolution\/10000",
+          "id": "10000",
+          "description": "Work has been completed on this issue.",
+          "name": "Done"
+        },
+        "customfield_10005": "0|i003en:",
+        "customfield_10006": null,
+        "aggregatetimeestimate": 0,
+        "resolutiondate": "2017-10-10T15:59:52.000-0500",
+        "workratio": -1,
+        "summary": "Add to Github: jira-worklog.php",
+        "lastViewed": "2017-11-01T16:31:36.227-0500",
+        "watches": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-146\/watchers",
+          "watchCount": 2,
+          "isWatching": true
+        },
+        "creator": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
+          "name": "chad",
+          "key": "chad",
+          "emailAddress": "chad@chadnorwood.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          },
+          "displayName": "Chad Norwood",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "subtasks": [],
+        "created": "2017-09-22T08:48:38.000-0500",
+        "reporter": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
+          "name": "chad",
+          "key": "chad",
+          "emailAddress": "chad@chadnorwood.com",
+          "avatarUrls": {
+            "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
+            "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
+            "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
+            "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          },
+          "displayName": "Chad Norwood",
+          "active": true,
+          "timeZone": "America\/Chicago"
+        },
+        "customfield_10000": null,
+        "aggregateprogress": {
+          "progress": 83700,
+          "total": 83700,
+          "percent": 100
+        },
+        "priority": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+          "name": "Medium",
+          "id": "3"
+        },
+        "labels": [
+          "coding"
+        ],
+        "customfield_10004": null,
+        "environment": null,
+        "timeestimate": 0,
+        "aggregatetimeoriginalestimate": null,
+        "versions": [],
+        "duedate": null,
+        "progress": {
+          "progress": 83700,
+          "total": 83700,
+          "percent": 100
+        },
+        "issuelinks": [
+          {
+            "id": "11402",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/11402",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "outwardIssue": {
+              "id": "12101",
+              "key": "CN-186",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/12101",
+              "fields": {
+                "summary": "Make jira-worklog.php better",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/10006",
+                  "description": "",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/generic.png",
+                  "name": "Doing",
+                  "id": "10006",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/4",
+                    "id": 4,
+                    "key": "indeterminate",
+                    "colorName": "yellow",
+                    "name": "In Progress"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+                  "id": "10002",
+                  "description": "A task that needs to be done.",
+                  "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+                  "name": "Task",
+                  "subtask": false,
+                  "avatarId": 10318
+                }
+              }
+            }
+          },
+          {
+            "id": "10913",
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLink\/10913",
+            "type": {
+              "id": "10003",
+              "name": "Relates",
+              "inward": "relates to",
+              "outward": "relates to",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issueLinkType\/10003"
+            },
+            "inwardIssue": {
+              "id": "11502",
+              "key": "CN-133",
+              "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11502",
+              "fields": {
+                "summary": "Add to Github: announcementBanner.js",
+                "status": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+                  "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+                  "name": "Resolved",
+                  "id": "5",
+                  "statusCategory": {
+                    "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "green",
+                    "name": "Done"
+                  }
+                },
+                "priority": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/priority\/3",
+                  "iconUrl": "https:\/\/jira.example.com\/images\/icons\/priorities\/medium.svg",
+                  "name": "Medium",
+                  "id": "3"
+                },
+                "issuetype": {
+                  "self": "https:\/\/jira.example.com\/rest\/api\/2\/issuetype\/10002",
+                  "id": "10002",
+                  "description": "A task that needs to be done.",
+                  "iconUrl": "https:\/\/jira.example.com\/secure\/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype",
+                  "name": "Task",
+                  "subtask": false,
+                  "avatarId": 10318
+                }
+              }
+            }
+          }
+        ],
+        "votes": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/CN-146\/votes",
+          "votes": 0,
+          "hasVoted": false
+        },
+        "assignee": null,
+        "updated": "2017-11-01T16:31:15.000-0500",
+        "status": {
+          "self": "https:\/\/jira.example.com\/rest\/api\/2\/status\/5",
+          "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+          "iconUrl": "https:\/\/jira.example.com\/images\/icons\/statuses\/resolved.png",
+          "name": "Resolved",
+          "id": "5",
+          "statusCategory": {
+            "self": "https:\/\/jira.example.com\/rest\/api\/2\/statuscategory\/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Done"
+          }
+        }
+      }
+    }
+  ]
+}

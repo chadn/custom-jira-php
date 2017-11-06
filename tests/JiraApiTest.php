@@ -17,8 +17,9 @@ final class JiraApiTest extends TestCase
         // https://phpunit.de/manual/current/en/test-doubles.html
         
         $cfg = [ 
-            'debug'=>true, 
-            'echoTiming'=>true 
+            //'debug'=>true, // if true, will echo debug info, like worklog entries
+            //'debugCache'=>true, // if true, will echo if cache hit
+            //'echoTiming'=>true // true: curl call summary
         ];
         $this->ja = $this->getMockBuilder('Norhaus\JiraApi')
                          ->setConstructorArgs([$cfg])
@@ -28,7 +29,7 @@ final class JiraApiTest extends TestCase
 
     public function testApiCallReturnsCurlWrapper()
     {
-        $cmd = 'issue/CN-175/worklog';
+        $cmd = 'issue/CN-133/worklog';
         $url = 'https://jira.example.com/rest/api/2/'. $cmd;
 
         $curlReturn = [

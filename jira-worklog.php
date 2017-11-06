@@ -103,10 +103,14 @@ if (1 === preg_match("/(\d\d\d\d-)(\d\d?)$/", $toDateInput)) {
 $jw = new JiraWorklog($cfg);
 $jw->getJiraIssues($fromDateInput, $toDateInput, $usernames, $jql);
 
+if (!$isCli && 'json' === $outfmt) {
+    header('Content-Type: application/json');
+}
+echo $jw->getOutput($outfmt);
+
 if ($jiraKey) {
     $jw->postComment($jiraKey);
 }
-echo $jw->getOutput($outfmt);
 
 
 

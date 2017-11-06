@@ -10,6 +10,7 @@ class JiraApi
         'apiCredentials' => 'rest-api:restP@ssword',
 
         'debug' => false,       // if true, echos detailed debug information
+        'debugCache' => false,  // if true, echos whether or not returning from useLocalJiraCache 
         'echoTiming' => false,  // if true, echos strings that show timing information
         'useLocalJiraCache' => true
     ];
@@ -39,7 +40,7 @@ class JiraApi
         if ("array" === gettype($cfg)) {
             $this->config = array_merge($this->config, $cfg);
         } else {
-            throw new Exception("must pass config parameters as array");
+            throw new \Exception("must pass config parameters as array");
         }
         return $this;
     }
@@ -59,11 +60,13 @@ class JiraApi
 
         if ('GET'==$type && $this->config['useLocalJiraCache']
             && array_key_exists($cacheKey, $this->localJiraCache)) {
-            //$this->dbg("apiCall() returning cached result for $cacheKey\n");
+            $this->dbg("apiCall() returning cached result, ". 
+                strlen($this->localJiraCache[$cacheKey]) ." bytes, for $cacheKey\n",
+                'debugCache');
             //echo $config['apiCall.cache'][$cacheKey] ."\n";
             return $this->localJiraCache[$cacheKey];
         }
-        //$this->dbg("apiCall() not returning cached result for $cacheKey\n");
+        $this->dbg("apiCall() not returning cached result for $cacheKey\n", 'debugCache');
 
         $url = $this->config['apiBaseUrl'] . '/rest/api/2/' . $command;
 
@@ -82,13 +85,13 @@ class JiraApi
             echo strlen($data) ." ". strlen($result) ." $url\n";
         }
         if ($ch_error) {
-            throw new Exception("cURL Error: $ch_error");
+            throw new \Exception("cURL Error: $ch_error");
         } elseif (403 == $httpcode) {
             $msg = "Common problem is too many failed login attempts.  Verify and reset here:\n";
             $msg .= $this->config['apiBaseUrl'] . "/secure/admin/user/UserBrowser.jspa\n\n";
-            throw new Exception("cURL expected HTTP 200, got $httpcode\n$msg");
+            throw new \Exception("cURL expected HTTP 200, got $httpcode\n$msg");
         } elseif (300 <= $httpcode) {
-            throw new Exception("cURL expected HTTP 2xx, got $httpcode");
+            throw new \Exception("cURL expected HTTP 2xx, got $httpcode");
         } else {
             if ('GET'==$type && $this->config['useLocalJiraCache']) {
                 $this->localJiraCache[$cacheKey] = $result;
@@ -158,7 +161,7 @@ class JiraApi
     {
         $issue = json_decode(apiCall('issue/'.$key));
         if (!empty($issue->errorMessages) && count($issue->errorMessages) > 0) {
-            throw new Exception("Cannot get issue $key: " . $issue->errorMessages[0]);
+            throw new \Exception("Cannot get issue $key: " . $issue->errorMessages[0]);
         }
         return $issue;
     }
@@ -259,14 +262,14 @@ class JiraApi
     public function requireType($type, $x)
     {
         if ($type != gettype($x)) {
-            throw new Exception(gettype($x) ." was passed, expected $type");
+            throw new \Exception(gettype($x) ." was passed, expected $type");
         }
     }
 
 
-    public function dbg($string)
+    public function dbg($string, $catg='debug')
     {
-        if ($this->config['debug']) {
+        if ($this->config[$catg]) {
             echo $string;
         }
     }

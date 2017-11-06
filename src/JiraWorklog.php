@@ -70,7 +70,7 @@ class JiraWorklog extends JiraApi
         } elseif ("integer" === gettype($fromDateInput)) {
             $this->fromEpoch = $fromDateInput;
         } else {
-            throw new Exception("invalid type for fromDateInput, must be string or integer");
+            throw new \Exception("invalid type for fromDateInput, must be string or integer");
         }
 
         if ("string" === gettype($toDateInput)) {
@@ -78,7 +78,7 @@ class JiraWorklog extends JiraApi
         } elseif ("integer" === gettype($toDateInput)) {
             $this->toEpoch = $toDateInput;
         } else {
-            throw new Exception("invalid type for fromDateInput, must be string or integer");
+            throw new \Exception("invalid type for fromDateInput, must be string or integer");
         }
 
         if ($usernames) {
@@ -106,7 +106,7 @@ class JiraWorklog extends JiraApi
         $apiResponse = $this->apiCall('search?maxResults=999&jql=' . urlencode($this->req['jql']), 'GET');
 
         if (!$apiResponse) {
-            throw new Exception("bad response from API server");
+            throw new \Exception("bad response from API server");
         }
         $this->jiraIssues = json_decode($apiResponse, true);
 
@@ -124,7 +124,7 @@ class JiraWorklog extends JiraApi
     public function prepOutput()
     {
         if (!$this->jiraIssues) {
-            throw new Exception("must call getJiraIssues() first");
+            throw new \Exception("must call getJiraIssues() first");
         }
 
         $this->dailyTotal = [];
@@ -321,7 +321,7 @@ class JiraWorklog extends JiraApi
                 } elseif (array_key_exists($f, $tkt)) {
                     $txtFlds[] = $tkt[$f];
                 } else {
-                    throw new Exception("unknown field ($f) in config['loggedPerIssueFields']");
+                    throw new \Exception("unknown field ($f) in config['loggedPerIssueFields']");
                 }
             }
             $txtStr .= implode(' ', $txtFlds) . "\n";
@@ -377,7 +377,6 @@ class JiraWorklog extends JiraApi
      */
     public function outputJson()
     {
-        header('Content-Type: application/json');
         $ret = [
             'req' => $this->req,
             'res' => $this->res

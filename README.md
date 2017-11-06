@@ -8,7 +8,7 @@ This repo contains php scripts that use Jira's REST API
 - [src/JiraWorklog.php](src/JiraWorklog.php) - PHP Class to handle parsing and summarizing jira worklogs
 - [jira-worklog.php](jira-worklog.php) - wrapper for JiraWorklog.php, provides web and command line interface (cli)
 - [jira-config.php](jira-config.php) - config file for jira-worklog.php, update this with your Jira API password.
-- [tests/jira-worklog.json](tests/jira-worklog.json) - example json output for jira-worklog.php
+- [tests/data/output1.json](tests/data/output1.json) - example json output for jira-worklog.php
 
 ## jira-worklog.php
 
@@ -113,12 +113,44 @@ Total logged per issue:
   30m CN-130 Print pictures, posters
   15m CN-133 Random Github work
 17.5h CN-146 jira-worklog.php
-  15m CN-153 Fix dropped SSH connections to Tatanka
+  15m CN-153 Fix dropped SSH connections 
 
 Daily Worklogs:
   6h Tue 2017-10-03 -- 30m CN-117, 30m CN-130, 15m CN-133, 4.5h CN-146, 15m CN-153
  13h Wed 2017-10-04 -- 13h CN-146
 ```
+
+### Tests
+
+If you plan on doing any development, you'll want to make sure phpunit tests work.  
+
+To setup, just need to run `composer install` after git clone, which will create a vendor folder.
+
+
+Example of running correctly.
+```
+[custom-jira-php] > vendor/bin/phpunit
+PHPUnit 6.4.3 by Sebastian Bergmann and contributors.
+
+...............                                                   15 / 15 (100%)
+
+Time: 36 ms, Memory: 6.00MB
+
+OK (14 tests, 14 assertions)
+
+
+[custom-jira-php] > vendor/bin/phpunit --testdox
+PHPUnit 6.4.3 by Sebastian Bergmann and contributors.
+
+Norhaus\Tests\JiraApi
+ [x] Api call returns curl wrapper
+ [x] True is true
+
+Norhaus\Tests\JiraWorklog
+ [x] Api call returns cache
+ [x] Json output 1
+ [x] Round it
+
 
 ### Todo
 
@@ -129,5 +161,5 @@ Daily Worklogs:
 - [ ] improve html output
 - [ ] add csv output
 - [x] add basic phpunit tests
-- [ ] mock Jira API with phpunit
+- [x] mock Jira API with phpunit
 
