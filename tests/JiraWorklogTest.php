@@ -57,7 +57,7 @@ final class JiraWorklogTest extends TestCase
 
     public function providerApiCallCache()
     {
-        $cmd = 'search?maxResults=999&jql=worklogDate%3E%3D2017-10-03+AND+worklogDate%3C%3D2017-10-05++ORDER+BY+key+ASC';
+        $cmd = 'search?maxResults=999&jql=worklogDate%3E%3D2017-10-03+AND+worklogDate%3C%3D2017-10-05+ORDER+BY+key+ASC';
         $expectedResult = file_get_contents(__DIR__ . "/data/search.json");
         //$expectedResult = ' .. contents of '. __DIR__ . "/search.json";
         $ret = array(
@@ -66,7 +66,7 @@ final class JiraWorklogTest extends TestCase
         foreach (['CN-117','CN-130','CN-133','CN-146'] as $val) {
             $cmd = "issue/$val/worklog";
             $expected = file_get_contents(__DIR__ . "/data/$val-worklog.json");
-            array_push($ret, [$cmd, $expected]);
+            $ret[] = [$cmd, $expected];
         }
         return $ret;
     }

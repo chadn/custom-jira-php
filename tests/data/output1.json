@@ -1,53 +1,121 @@
 {
   "req": {
     "usernames": [],
-    "jql": "worklogDate>=2017-10-03 AND worklogDate<=2017-10-05  ORDER BY key ASC",
+    "jql": "worklogDate>=2017-10-03 AND worklogDate<=2017-10-05 ORDER BY key ASC",
     "fromDateInput": "2017-10-03",
     "toDateInput": "2017-10-05",
     "fromEpoch": 1506988800,
     "toEpoch": 1507161600
   },
   "res": {
-    "dateComputed": "2017-11-05 Sun 11:35pm UTC",
-    "dateComputedEpoch": 1509924958,
+    "dateComputed": "2017-11-06 Mon 9:35pm UTC",
+    "dateComputedEpoch": 1510004154,
     "total": {
       "timespentSecs": 20700,
       "timespentPretty": "5.8h"
     },
-    "dailyTotal": {
+    "byDate": {
       "Tue 2017-10-03": {
         "totalSecs": 14400,
+        "authors": {
+          "chad": {
+            "totalSecs": 14400,
+            "CN-146": 14400
+          }
+        },
         "CN-146": 14400
       },
       "Wed 2017-10-04": {
         "totalSecs": 6300,
+        "authors": {
+          "chad": {
+            "totalSecs": 4500,
+            "CN-117": 1800,
+            "CN-130": 1800,
+            "CN-133": 900
+          },
+          "rest-api": {
+            "totalSecs": 1800,
+            "CN-146": 1800
+          }
+        },
         "CN-117": 1800,
         "CN-130": 1800,
         "CN-133": 900,
         "CN-146": 1800
-      },
-      "Thu 2017-10-05": {
-        "totalSecs": 57600,
-        "CN-146": 57600
       }
     },
-    "issues": {
+    "byIssues": {
       "CN-117": {
         "summary": "Better Frames for art to hang.",
-        "timespentPretty": "  30m"
+        "timespentPretty": "  30m",
+        "timeSpentSecs": 1800
       },
       "CN-130": {
         "summary": "Print pictures, posters",
-        "timespentPretty": "  30m"
+        "timespentPretty": "  30m",
+        "timeSpentSecs": 1800
       },
       "CN-133": {
         "summary": "Add to Github: announcementBanner.js",
-        "timespentPretty": "  15m"
+        "timespentPretty": "  15m",
+        "timeSpentSecs": 900
       },
       "CN-146": {
         "summary": "Add to Github: jira-worklog.php",
-        "timespentPretty": " 4.5h"
+        "timespentPretty": " 4.5h",
+        "timeSpentSecs": 16200
       }
-    }
+    },
+    "byAuthor": {
+      "chad": {
+        "totalSecs": 18900,
+        "CN-117": 1800,
+        "CN-130": 1800,
+        "CN-133": 900,
+        "CN-146": 14400
+      },
+      "rest-api": {
+        "totalSecs": 1800,
+        "CN-146": 1800
+      }
+    },
+    "byWorklogs": [
+      {
+        "issueKey": "CN-117",
+        "author": "chad",
+        "worklogId": "11318",
+        "startTime": 1507083060,
+        "timeSpentSecs": 1800
+      },
+      {
+        "issueKey": "CN-130",
+        "author": "chad",
+        "worklogId": "11317",
+        "startTime": 1507088880,
+        "timeSpentSecs": 1800
+      },
+      {
+        "issueKey": "CN-133",
+        "author": "chad",
+        "worklogId": "11316",
+        "startTime": 1507084020,
+        "timeSpentSecs": 900
+      },
+      {
+        "issueKey": "CN-146",
+        "author": "chad",
+        "worklogId": "11315",
+        "startTime": 1507064940,
+        "timeSpentSecs": 14400
+      },
+      {
+        "issueKey": "CN-146",
+        "author": "rest-api",
+        "worklogId": "11319",
+        "startTime": 1507087200,
+        "timeSpentSecs": 1800
+      }
+    ]
   }
 }

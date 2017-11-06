@@ -7,11 +7,14 @@ class JiraWorklog extends JiraApi
 {
     public $req;          // request object, used for output
     public $res;          // result object, used for output
-    public $allAuthors;   // object, key is authors
+    public $allAuthors;   // object, list of all authors within timeframe, key is authors
     private $fromEpoch;   // number of seconds since epoch
     private $toEpoch;     // number of seconds since epoch
-    private $total;       // array of daily totals
-    private $dailyTotal;  // array of daily totals
+    private $total;       // array of totals
+    private $byDate;      // array of daily totals - change to byDate
+    private $byAuthor;    // array of daily totals - change to byDate
+    private $byWorklogs;  // array of worklog entries
+    private $byIssues;    // array of jira issues entries
 
 
     /**
@@ -20,8 +23,8 @@ class JiraWorklog extends JiraApi
      * @var array
      */
     private $jwConfig = [
-        'skipEmptyWorklogs' => true,  // if true, json output will only include days with worklogs
-        'dailyTotalDateFmt' => 'D Y-m-d', // Fri 2017-08-11
+        //'skipEmptyWorklogs' => true,  // if true, json output will only include days with worklogs
+        'byDateFmt'        => 'D Y-m-d', // How worklogs are split up. ex: Fri 2017-08-11.  Aggregates based on worklog start time.  Date format can be day, hour, week, month ..
         'outputDateFmt'     => 'Y-m-d D', // used in Total Time logged summary, from DATE to DATE
         'asOfDateFmt'      => 'Y-m-d D g:ia T', // used in Total Time logged summary
         'jsonIssueFields' => [  // fields used for json output, under res->issues
@@ -55,7 +58,8 @@ class JiraWorklog extends JiraApi
 
 
     /**
-     * Retrieve all Jira Issues that may have worklogs between dates passed
+     * Retrieve all Jira Issues that may have worklogs between dates passed, parse,
+     * and store all matching in $worklogs
      *
      * @param  string|int  $fromDateInput look at jira issues after this date
      * @param  string|int  $toDateInput   look at jira issues before this date
@@ -88,21 +92,24 @@ class JiraWorklog extends JiraApi
         }
         if ($jql) {
             if (0===preg_match('/^\s*AND/i', $jql)) {
-                $jql = "AND ($jql)";
+                $jql = " AND ($jql)";
             } else {
-                $jql = "($jql)";
+                $jql = " ($jql)";
             }
         }
 
+        $this->byWorklogs = [];
         $this->allAuthors = [];
         $fromDateJQL = date('Y-m-d', $this->fromEpoch);
         $toDateJQL   = date('Y-m-d', $this->toEpoch);
-        $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL $jql ORDER BY key ASC";
+        $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL$jql ORDER BY key ASC";
         $this->req['fromDateInput'] = $fromDateInput;
         $this->req['toDateInput']   = $toDateInput;
         $this->req['fromEpoch'] = $this->fromEpoch;
         $this->req['toEpoch']   = $this->toEpoch;
 
+        // Input validated, Now get issue keys from Jira
+        // 
         $apiResponse = $this->apiCall('search?maxResults=999&jql=' . urlencode($this->req['jql']), 'GET');
 
         if (!$apiResponse) {
@@ -110,16 +117,82 @@ class JiraWorklog extends JiraApi
         }
         $this->jiraIssues = json_decode($apiResponse, true);
 
+        // get list of jira issue keys, summary, and other fields for output
+        $this->byIssues = $this->getFlattenedIssues($this->jiraIssues, $this->config['jsonIssueFields']);
+
+        // Now get worklogs for each issueKey
+        foreach ($this->byIssues as $key => $tkt) {
+            $this->parseJiraWorklogs($key, $this->fromEpoch, $this->toEpoch, $this->req['usernames']);
+        }
         $this->prepOutput();
+        //$this->saveIt('results', $this->res);
 
         return $this;
     }
 
 
+
     /**
-     * Builds array data for output using most recent worklog request.
+     * Fetches worklogs from Jira given $key, returns worklogs within date and matching authors
      *
-     * @return JiraWorklog $this (chainable)
+     * @param  string   $key        issue key
+     * @param  integer  $fromEpoch  starting from this date, in seconds since epoch
+     * @param  integer  $toEpoch    ending at this date, in seconds since epoch
+     * @param  string   $author     if not empty, only count worklogs made by this author
+     * @return array    $worklogs   list of worklogs that match times and authors.
+     */
+    public function parseJiraWorklogs($key, $fromEpoch, $toEpoch, $authors=[])
+    {
+        $this->dbg("parseJiraWorklogs($key) fromEpoch=$fromEpoch toEpoch=$toEpoch ");
+
+        # get the full worklog for that issue
+        //$ret = json_decode(apiCall("issue/$key/worklog"), true);
+        $ret = json_decode($this->apiCall("issue/$key/worklog", 'GET'), true);
+
+        foreach ($ret['worklogs'] as $entry) {
+            $startedEpoch = strtotime($entry['started']);
+            $dbgStr = "worklog {$entry['id']} with started=$startedEpoch ". $entry['started'];
+
+            if ($startedEpoch < $fromEpoch) {
+                $this->dbg("Skipping (time, too early) $dbgStr\n");
+                continue;           
+            }
+            if ($startedEpoch > $toEpoch) {
+                $this->dbg("Skipping (time, too recent) $dbgStr\n");
+                continue;           
+            }
+            if (!empty($authors)) {
+                $match = false;
+                foreach ($authors as $author) {
+                    if ($author == $entry['author']['name']) {
+                        $match = true;
+                        break;
+                    }
+                }
+                if (!$match) {
+                    $this->dbg("Skipping (authors!={$entry['author']['name']}) $dbgStr\n");
+                    continue;
+                }
+            }
+            $this->dbg("Using $dbgStr\n");
+
+            $this->byWorklogs[] = [
+                'issueKey'      => $key,
+                //'issueId'     => $entry['issueId'],
+                'author'        => $entry['author']['name'],
+                'worklogId'     => $entry['id'],
+                //'comment'     => $entry['comment'],
+                'startTime'     => $startedEpoch,
+                'timeSpentSecs' => $entry['timeSpentSeconds']
+            ];
+            $this->allAuthors[$entry['author']['name']] = 1;
+        }
+    }
+
+
+    /**
+     * Takes byWorklog data and copies and totals it for byDate, byIssues, byAuthor
+     *
      */
     public function prepOutput()
     {
@@ -127,136 +200,78 @@ class JiraWorklog extends JiraApi
             throw new \Exception("must call getJiraIssues() first");
         }
 
-        $this->dailyTotal = [];
+        $this->byDate = [];
+        $this->byAuthor = [];
         $this->total = ['timespentSecs' => 0];
-        //echo var_dump($argv); echo "$fromDate $toDate\n"; exit();
 
-        // get list of jira issue keys and fields for output
-        $flattenedIssues = $this->getFlattenedIssues($this->jiraIssues, $this->config['jsonIssueFields']);
-
-        foreach ($flattenedIssues as $key => $tkt) {
-            $secs = $this->getWorklogTotal($key, $this->fromEpoch, $this->toEpoch);
-            
+        foreach ($this->byWorklogs as $worklog) {
+            // 
+            // Add worklog info to byDate, byIssues, byAuthor
+            // 
+            $dateStr = date($this->config['byDateFmt'], $worklog['startTime']);
+            if (!array_key_exists($dateStr, $this->byDate)) {
+                $this->byDate[$dateStr] = [
+                    'totalSecs' => 0, 
+                    'authors' => []
+                ];
+            }
+            if (!array_key_exists($worklog['issueKey'], $this->byDate[$dateStr])) {
+                $this->byDate[$dateStr][$worklog['issueKey']] = 0;
+            }
+            if (!array_key_exists($worklog['author'], $this->byDate[$dateStr]['authors'])) {
+                $this->byDate[$dateStr]['authors'][$worklog['author']] = ['totalSecs' => 0];
+            }
+            if (!array_key_exists($worklog['issueKey'], $this->byDate[$dateStr]['authors'][$worklog['author']])) {
+                $this->byDate[$dateStr]['authors'][$worklog['author']][$worklog['issueKey']] = 0;
+            }
+            if (!array_key_exists($worklog['author'], $this->byAuthor)) {
+                $this->byAuthor[$worklog['author']] = ['totalSecs' => 0];
+            }
+            if (!array_key_exists($worklog['issueKey'], $this->byAuthor[$worklog['author']])) {
+                $this->byAuthor[$worklog['author']][$worklog['issueKey']] = 0;
+            }
+            if (!array_key_exists('timeSpentSecs', $this->byIssues[$worklog['issueKey']])) {
+                $this->byIssues[$worklog['issueKey']]['timeSpentSecs'] = 0;
+            }
+            // initializing done, now add time
+            $secs = $worklog['timeSpentSecs'];
             $this->total['timespentSecs'] += $secs;
-            $flattenedIssues[$key]['timespentPretty'] = $this->roundit($secs, "%5s");
-            
-            $this->updateWorklogDailyTotal($key);
+            $this->byDate[$dateStr]['totalSecs'] += $secs;
+            $this->byDate[$dateStr][$worklog['issueKey']] += $secs;
+            $this->byDate[$dateStr]['authors'][$worklog['author']]['totalSecs'] += $secs;
+            $this->byDate[$dateStr]['authors'][$worklog['author']][$worklog['issueKey']] += $secs;
+            $this->byAuthor[$worklog['author']]['totalSecs'] += $secs;
+            $this->byAuthor[$worklog['author']][$worklog['issueKey']] += $secs;
+            $this->byIssues[$worklog['issueKey']]['timeSpentSecs'] += $secs;
         }
-        uksort($this->dailyTotal, array('Norhaus\JiraWorklog', 'mySortByDateStr'));
         $this->total['timespentPretty'] = $this->roundit($this->total['timespentSecs']);
+        foreach ($this->byIssues as $key => $value) {
+            if (!array_key_exists('timeSpentSecs', $this->byIssues[$key])) {
+                // remove jira issues that matched search but did not have worklogs by authors in timeframe
+                unset($this->byIssues[$key]);
+                continue;
+            }
+            $this->byIssues[$key]['timespentPretty'] = $this->roundit($this->byIssues[$key]['timeSpentSecs'], "%5s");
+        }
+
+        uksort($this->byDate, array('Norhaus\JiraWorklog', 'mySortByDateStr'));
 
         $this->res = [
             'dateComputed'      => date($this->config['asOfDateFmt']),
             'dateComputedEpoch' => time(),
             'total'             => $this->total,
-            'dailyTotal'        => $this->dailyTotal,
-            'issues'            => $flattenedIssues
+            'byDate'            => $this->byDate,
+            'byIssues'          => $this->byIssues,
+            'byAuthor'          => $this->byAuthor,
+            'byWorklogs'        => $this->byWorklogs
         ];
         if ($this->config['debug']) {
             $allAuthors = array_keys($this->allAuthors);
             sort($allAuthors);
             $this->dbg("all worklog authors: " . implode(",", $allAuthors) . "\n");
         }
-        return $this;
     }
 
-
-    /**
-     * Returns total seconds worked between fromEpoch toEpoch by examining all worklogs
-     *
-     * @param  string   $key        issue key
-     * @param  integer  $fromEpoch  starting from this date, in seconds since epoch
-     * @param  integer  $toEpoch    ending at this date, in seconds since epoch
-     * @param  string   $author     if not empty, only count worklogs made by this author
-     * @return integer  $totalSecs
-     */
-    public function getWorklogTotal($key, $fromEpoch, $toEpoch, $author='')
-    {
-        $dbg = $this->config['debug'];
-        $totalSecs = 0;
-
-        # get the full worklog for that issue
-        //$ret = json_decode(apiCall("issue/$key/worklog"), true);
-        $ret = json_decode($this->apiCall("issue/$key/worklog", 'GET'), true);
-
-        $this->dbg("getWorklogTotal($key) fromEpoch=$fromEpoch toEpoch=$toEpoch ");
-
-        foreach ($ret['worklogs'] as $entry) {
-            $startedEpoch = strtotime($entry['started']);
-            $this->allAuthors[$entry['author']['name']] = 1;
-
-            if ($startedEpoch >= $fromEpoch && $startedEpoch <= $toEpoch) {
-                if (!$author || ($author == $entry['author']['name'])) {
-                    $totalSecs += $entry['timeSpentSeconds'];
-                    $this->dbg("Using ");
-                } else {
-                    $this->dbg("Skipping ($author!={$entry['author']['name']}) ");
-                }
-            } else {
-                $this->dbg("Skipping (time) ");
-            }
-            $this->dbg("worklog {$entry['id']} with started=$startedEpoch, " . $entry['started'] . "\n");
-        }
-        return $totalSecs;
-    }
-
-
-    /**
-     * updates $this->dailyTotal with worklog data
-     *
-     * @param  string $key Jira issue key
-     */
-    public function updateWorklogDailyTotal($key)
-    {
-        // normalize $fromEpoch to be start of day - do not support partial day checks,
-        // since many people create worklogs without paying attention to correct time
-        $fromEpoch2 = strtotime(date('Y-m-d', $this->fromEpoch));
-
-        // for each day between fromEpoch and toEpoch, get daily total
-        for ($curTime = $fromEpoch2; $curTime <= $this->toEpoch; $curTime += 60*60*24) {
-            $endTime = $curTime + 60*60*24; // one day increments
-            $dateStr = date($this->config['dailyTotalDateFmt'], $curTime);
-
-            if ($this->req['usernames']) {
-                $users = $this->dailyTotal[$dateStr]['authors'] ?: [];
-                $secs = 0;
-                foreach ($this->req['usernames'] as $user) {
-                    $usersecs = $this->getWorklogTotal($key, $curTime, $endTime, $user);
-                    if (0 === $usersecs && $this->config['skipEmptyWorklogs']) {
-                        continue;
-                    }
-
-                    if (!array_key_exists($user, $users)) {
-                        $users[$user] = ['totalSecs' => 0];
-                    }
-                    $users[$user]['totalSecs'] += $usersecs;
-                    $users[$user][$key] += $usersecs;
-                    $secs += $usersecs;
-                }
-                if (0 === $secs && $this->config['skipEmptyWorklogs']) {
-                    continue;
-                }
-            } else {
-                $secs = $this->getWorklogTotal($key, $curTime, $endTime);
-                if (0 === $secs && $this->config['skipEmptyWorklogs']) {
-                    continue;
-                }
-            }
-            
-            if (!array_key_exists($dateStr, $this->dailyTotal)) {
-                $this->dailyTotal[$dateStr] = ['totalSecs' => 0];
-                //echo " ---- initialized dailyTotal $dateStr\n";
-            }
-            if ($this->req['usernames']) {
-                $this->dailyTotal[$dateStr]['authors'] = $users;
-            }
-            $this->dailyTotal[$dateStr]['totalSecs'] += $secs;
-            if (!array_key_exists($key, $this->dailyTotal[$dateStr])) {
-                $this->dailyTotal[$dateStr][$key] = 0;
-            }
-            $this->dailyTotal[$dateStr][$key] += $secs;
-        }
-    }
 
 
     /**
@@ -264,10 +279,10 @@ class JiraWorklog extends JiraApi
      *
      * @return string summary of time spent per issue each day, one day per line
      */
-    public function prettyPrintWorklogDailyTotal()
+    public function prettyPrintWorklogByDate()
     {
         $txtStr = "Daily Worklogs:\n";
-        foreach ($this->dailyTotal as $dateStr => $dt) {
+        foreach ($this->byDate as $dateStr => $dt) {
             if (0 === $dt['totalSecs']) {
                 continue;
             }
@@ -292,7 +307,7 @@ class JiraWorklog extends JiraApi
     public function prettyPrintIssueDaily($key)
     {
         $ret = [];
-        foreach ($this->dailyTotal as $dateStr => $dt) {
+        foreach ($this->byDate as $dateStr => $dt) {
             if (!array_key_exists($key, $dt)) {
                 continue;
             }
@@ -311,7 +326,7 @@ class JiraWorklog extends JiraApi
     public function prettyPrintWorklogIssues()
     {
         $txtStr = "Total logged per issue:\n";
-        foreach ($this->res['issues'] as $key => $tkt) {
+        foreach ($this->res['byIssues'] as $key => $tkt) {
             $txtFlds = [];
             foreach ($this->config['loggedPerIssueFields'] as $f) {
                 if ('dailySummary' == $f) {
@@ -394,7 +409,7 @@ class JiraWorklog extends JiraApi
     {
         $output = "\n". $this->prettyPrintWorklogSummary() . "\n";
         $output .= $this->prettyPrintWorklogIssues() . "\n";
-        $output .= $this->prettyPrintWorklogDailyTotal() . "\n";
+        $output .= $this->prettyPrintWorklogByDate() . "\n";
         return $output;
     }
 
@@ -407,7 +422,7 @@ class JiraWorklog extends JiraApi
     {
         $output = $this->prettyPrintWorklogSummary();
         $output .= "\n{code}\n" . $this->prettyPrintWorklogIssues() . "{code}\n";
-        $output .= "\n{code}\n" . $this->prettyPrintWorklogDailyTotal() . "{code}\n";
+        $output .= "\n{code}\n" . $this->prettyPrintWorklogByDate() . "{code}\n";
         return $output;
     }
 
@@ -421,7 +436,7 @@ class JiraWorklog extends JiraApi
     {
         $output = "\n<pre>\n". $this->prettyPrintWorklogSummary() . "\n";
         $output .= "\n" . $this->prettyPrintWorklogIssues() . "\n";
-        $output .= "\n\n" . $this->prettyPrintWorklogDailyTotal() . "</pre>\n";
+        $output .= "\n\n" . $this->prettyPrintWorklogByDate() . "</pre>\n";
         return $output;
     }
 

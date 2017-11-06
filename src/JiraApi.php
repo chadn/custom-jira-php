@@ -236,6 +236,27 @@ class JiraApi
     }
 
     /**
+     * create json file and pretty print data to it
+     *
+     * @param  string        $basefn  used for filename 
+     * @param  array|object  $mixed   data to save, will be converted to json string if not string
+     */
+    public function saveIt($basefn, $mixed)
+    {
+        $fn = "$basefn.". date('U') .".json";
+
+        if ("string" == gettype($mixed)) {
+            $mixed = json_decode($mixed, true);
+        } elseif ("object" == gettype($mixed)) {
+            $mixed = json_decode(json_encode($mixed), true);
+        } elseif ("array" == gettype($mixed)) {
+            // 
+        }
+        file_put_contents(__DIR__ . "/$fn", $this->jsonPrettyPrint($mixed) );
+        echo "wrote\n$fn\n";
+    }
+
+    /**
      * Does json_encode with JSON_PRETTY_PRINT flag but allows 2-space indentation
      *
      * @param  array|object  $mixed        php array
