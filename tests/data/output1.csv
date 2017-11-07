@@ -1,0 +1,10 @@
+WorklogId, Author, IssueKey, StartTime, MinutesLogged, NOTE: Generated 2017-11-07 13:36 Tue CST using JQL: worklogDate>=2017-10-03 AND worklogDate<=2017-10-05 ORDER BY key ASC
+11318, chad, CN-117, 2017-10-03 21:11 Tue CDT, 30
+11324, chad, CN-117, 2017-10-05 21:03 Thu CDT, 60
+11317, jo, CN-130, 2017-10-03 12:48 Tue CDT, 60
+11327, jo, CN-130, 2017-10-05 21:15 Thu CDT, 15
+11316, chad, CN-133, 2017-10-03 21:27 Tue CDT, 15
+11315, chad, CN-146, 2017-10-03 16:09 Tue CDT, 240
+11319, rest-api, CN-146, 2017-10-03 22:20 Tue CDT, 30
+11320, jo, CN-146, 2017-10-04 22:26 Wed CDT, 780
+11321, chad, CN-146, 2017-10-05 16:28 Thu CDT, 180

@@ -1,0 +1,113 @@
+{
+  "req": {
+    "usernames": [
+      "rest-api",
+      "jo"
+    ],
+    "jql": "worklogDate>=2017-10-03 AND worklogDate<=2017-10-05 ORDER BY key ASC",
+    "fromDateInput": "2017-10-03",
+    "toDateInput": "2017-10-05",
+    "fromEpoch": 1507006800,
+    "toEpoch": 1507265999,
+    "fromIso8601": "2017-10-03T00:00:00-05:00",
+    "toIso8601": "2017-10-05T23:59:59-05:00"
+  },
+  "res": {
+    "dateComputed": "2017-11-07 Tue 12:32pm CST",
+    "dateComputedEpoch": 1510079577,
+    "total": {
+      "timespentSecs": 53100,
+      "timespentPretty": "14.8h"
+    },
+    "byDate": {
+      "Tue 2017-10-03": {
+        "totalSecs": 5400,
+        "authors": {
+          "jo": {
+            "totalSecs": 3600,
+            "CN-130": 3600
+          },
+          "rest-api": {
+            "totalSecs": 1800,
+            "CN-146": 1800
+          }
+        },
+        "CN-130": 3600,
+        "CN-146": 1800
+      },
+      "Wed 2017-10-04": {
+        "totalSecs": 46800,
+        "authors": {
+          "jo": {
+            "totalSecs": 46800,
+            "CN-146": 46800
+          }
+        },
+        "CN-146": 46800
+      },
+      "Thu 2017-10-05": {
+        "totalSecs": 900,
+        "authors": {
+          "jo": {
+            "totalSecs": 900,
+            "CN-130": 900
+          }
+        },
+        "CN-130": 900
+      }
+    },
+    "byIssues": {
+      "CN-130": {
+        "summary": "Print pictures, posters",
+        "timespentPretty": " 1.3h",
+        "timeSpentSecs": 4500
+      },
+      "CN-146": {
+        "summary": "Add to Github: jira-worklog.php",
+        "timespentPretty": "13.5h",
+        "timeSpentSecs": 48600
+      }
+    },
+    "byAuthor": {
+      "jo": {
+        "totalSecs": 51300,
+        "CN-130": 4500,
+        "CN-146": 46800
+      },
+      "rest-api": {
+        "totalSecs": 1800,
+        "CN-146": 1800
+      }
+    },
+    "byWorklogs": [
+      {
+        "issueKey": "CN-130",
+        "author": "jo",
+        "worklogId": "11317",
+        "startTime": 1507052880,
+        "timeSpentSecs": 3600
+      },
+      {
+        "issueKey": "CN-130",
+        "author": "jo",
+        "worklogId": "11327",
+        "startTime": 1507256100,
+        "timeSpentSecs": 900
+      },
+      {
+        "issueKey": "CN-146",
+        "author": "rest-api",
+        "worklogId": "11319",
+        "startTime": 1507087200,
+        "timeSpentSecs": 1800
+      },
+      {
+        "issueKey": "CN-146",
+        "author": "jo",
+        "worklogId": "11320",
+        "startTime": 1507173960,
+        "timeSpentSecs": 46800
+      }
+    ]
+  }
+}

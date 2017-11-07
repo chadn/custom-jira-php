@@ -76,14 +76,13 @@ class JiraApi
 
         $elapsedMs = round(1000*(microtime(true) - $start));
 
-        $ch_error = $ret['error'];
+        $ch_error = $ret['error'] ?: 0;
         $httpcode = $ret['httpcode'];
         $result   = $ret['result'];
 
-        if ($this->config['echoTiming']) {
-            echo "curl: err=$ch_error $elapsedMs" . "ms $httpcode $type ";
-            echo strlen($data) ." ". strlen($result) ." $url\n";
-        }
+
+        $this->dbg("curl: err=$ch_error $elapsedMs" . "ms $httpcode $type ". strlen($data) ." ". strlen($result) ." $url\n" ,'echoTiming');
+
         if ($ch_error) {
             throw new \Exception("cURL Error: $ch_error");
         } elseif (403 == $httpcode) {
@@ -291,7 +290,7 @@ class JiraApi
     public function dbg($string, $catg='debug')
     {
         if ($this->config[$catg]) {
-            echo $string;
+            fwrite(STDERR, $string);
         }
     }
 }

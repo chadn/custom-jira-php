@@ -22,15 +22,15 @@ $usage = <<<USAGEOF
 $me [options]
 
   -f str  from date string, anything that can be parsed by strtotime(). REQUIRED.
-  -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'today'.
+  -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'now'.
   -u usrs filter worklogs to only include ones matching jira users. Comma separate usernames in usrs.
   -o out  output format, specify one of: txt, json, csv, html.  Optional, default is $outfmt.
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is $cfgFile
   -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
   -w      instead of giving daily totals, give totals per week.
-  -v      verbose output, including basic timing info with API.
-  -d      debug output - warning - this contains a ton of information.
+  -v      verbose output, including basic timing info with API, written to STDERR.
+  -d      debug output - warning - this contains a ton of information, written to STDERR.
   -h      show this help and exit.
 
 Examples:
@@ -55,11 +55,11 @@ $usageWeb = <<<USAGE2WEB
 <a href="$me?f=-7+days&u=chad,jo"  >$me?f=-7+days&u=chad,jo</a>      # the last 7 days, only users chad and jo
 <a href="$me?f=-7+days&k=CN-12"    >$me?f=-7+days&k=CN-12</a>        # the last 7 days, and post comment to CN-12
 <a href="$me?f=-7+days&o=json"     >$me?f=-7+days&o=json</a>         # the last 7 days, output in json
-<a href="$me?f=-7+days&o=json"     >$me?f=-7+days&o=csv</a>          # the last 7 days, output in csv (open with excel) 
+<a href="$me?f=-7+days&o=csv"      >$me?f=-7+days&o=csv</a>          # the last 7 days, output in csv (open with excel) 
 <a href="$me?f=-7+days&j=labels%3Dfun">$me?f=-7+days&j=labels%3Dfun</a> # last 7 days, jql: labels=fun
 <a href="$me?f=2017-1-1&t=2017-1-1">$me?f=2017-1-1&t=2017-1-1</a>    # just new years day 2017
 <a href="$me?f=2017-1&t=2017-3"    >$me?f=2017-1&t=2017-3</a>        # Q1 of 2017
-<a href="$me?f=2017-1&t=2017-3"    >$me?f=2017-1&t=2017-3&w=1</a>    # Q1 of 2017, weekly byDate summary
+<a href="$me?f=2017-1&t=2017-3&w=1">$me?f=2017-1&t=2017-3&w=1</a>    # Q1 of 2017, weekly byDate summary
 
 USAGE2WEB;
 
@@ -70,19 +70,19 @@ $usage = $isCli ? $usage : "<pre>". $usage . "</pre>";
 if ($isCli) {
     // : required
     // :: optional
-    $options = getopt("c::df:hj::k::o::t::u::vw");
+    $options = getopt("ac::df:hj::k::o::t::u::vw");
 
 } else {
     // allow options from  $_GET, $_POST and $_COOKIE
     $options = &$_REQUEST;
 }
-if (@isset($options[h]) || !array_key_exists('f', $options)) {
+if (@isset($options[h]) || (!(array_key_exists('f', $options) || @isset($options[a])))) {
     echo $usage;
     exit;
 }
 
-$fromDateInput = $options['f'];
-$toDateInput   = @$options['t'] ?: 'today';  // ternary shorthand
+$fromDateInput = @$options['f'];
+$toDateInput   = @$options['t'] ?: 'now';  // ternary shorthand
 $jiraKey       = @$options['k'] ?: '';
 $usernames     = @$options['u'] ?: '';
 $outfmt        = @$options['o'] ?: $outfmt;
@@ -96,9 +96,10 @@ if (@isset($options[v])) {
 }
 if (@isset($options[d])) {
   $cfg['debug'] = true;
+  $cfg['debugCache'] = true;
 }
 if (@isset($options[w])) {
-  $cfg['byDateFmt'] = 'Y \W\e\e\k W';
+  $cfg['byDateFmt'] = 'o \W\e\e\k W';
 }
 
 
@@ -108,7 +109,32 @@ if (1 === preg_match("/(\d\d\d\d-)(\d\d?)$/", $toDateInput)) {
     $toDateInput  = date('Y-m-t', strtotime($toDateInput)); 
 }
 
+if ('csv' === $outfmt) {
+  $cfg['asOfDateFmt'] = 'Y-m-d H:i D T';
+}
+
 $jw = new JiraWorklog($cfg);
+
+if (@isset($options['a'])) {
+    // Simple way to test using cached JSON from Jira
+    // Can change authors and output type from cmd-line. 
+    // Cannot change jql at all (must be blank), must match cmd in providerApiCallCache()
+    // Cannot change from, to dates - but can change time, ex: -f='2017-10-03T22:00:00-05:00'
+    $dataProvider = providerApiCallCache();
+    foreach ($dataProvider as $val) {
+        $cmd = $val[0];
+        $expectedResult =  $val[1];
+        $jw->localJiraCache[ $cmd ] = $expectedResult;
+    }
+    $jql = '';
+    if ('2017-10-03' != date('Y-m-d', strtotime($fromDateInput))) {
+      $fromDateInput = '2017-10-03';
+    }
+    if ('2017-10-05' != date('Y-m-d', strtotime($toDateInput))) {
+      $toDateInput = '2017-10-05';
+    }
+    fwrite(STDERR, "\nDETECTED -a USING CACHED JSON\n\n");
+}
 $jw->getJiraIssues($fromDateInput, $toDateInput, $usernames, $jql);
 $outputStr = $jw->getOutput($outfmt);
 
@@ -151,5 +177,22 @@ function getPathToScript() {
     }
     $path = preg_replace('/[^\/]+$/', '', $path);
     return $path;
+}
+
+
+function providerApiCallCache()
+{
+    $cmd = 'search?maxResults=999&jql=worklogDate%3E%3D2017-10-03+AND+worklogDate%3C%3D2017-10-05+ORDER+BY+key+ASC';
+    $expectedResult = file_get_contents(__DIR__ . "/tests/data/CN-search.json");
+    //$expectedResult = ' .. contents of '. __DIR__ . "/search.json";
+    $ret = array(
+        [$cmd, $expectedResult]
+    );
+    foreach (['CN-117','CN-130','CN-133','CN-146'] as $val) {
+        $cmd = "issue/$val/worklog";
+        $expected = file_get_contents(__DIR__ . "/tests/data/$val-worklog.json");
+        $ret[] = [$cmd, $expected];
+    }
+    return $ret;
 }
 

@@ -129,32 +129,32 @@
     {
       "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11610\/worklog\/11320",
       "author": {
-        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
-        "name": "chad",
-        "key": "chad",
-        "emailAddress": "chad@chadnorwood.com",
+        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=jo",
+        "name": "jo",
+        "key": "jo",
+        "emailAddress": "jo@chadnorwood.com",
         "avatarUrls": {
           "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
           "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
           "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
           "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
         },
-        "displayName": "Chad Norwood",
+        "displayName": "Jo Norwood",
         "active": true,
         "timeZone": "America\/Chicago"
       },
       "updateAuthor": {
-        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
-        "name": "chad",
-        "key": "chad",
-        "emailAddress": "chad@chadnorwood.com",
+        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=jo",
+        "name": "jo",
+        "key": "jo",
+        "emailAddress": "jo@chadnorwood.com",
         "avatarUrls": {
           "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
           "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
           "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
           "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
         },
-        "displayName": "Chad Norwood",
+        "displayName": "Jo Norwood",
         "active": true,
         "timeZone": "America\/Chicago"
       },
@@ -211,32 +211,32 @@
     {
       "self": "https:\/\/jira.example.com\/rest\/api\/2\/issue\/11610\/worklog\/11336",
       "author": {
-        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
-        "name": "chad",
-        "key": "chad",
-        "emailAddress": "chad@chadnorwood.com",
+        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=rest-api",
+        "name": "rest-api",
+        "key": "rest-api",
+        "emailAddress": "rest-api@gmail.com",
         "avatarUrls": {
-          "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
-          "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
-          "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
-          "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          "48x48": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=48",
+          "24x24": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=24",
+          "16x16": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=16",
+          "32x32": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=32"
         },
-        "displayName": "Chad Norwood",
+        "displayName": "Generic REST API",
         "active": true,
         "timeZone": "America\/Chicago"
       },
       "updateAuthor": {
-        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=chad",
-        "name": "chad",
-        "key": "chad",
-        "emailAddress": "chad@chadnorwood.com",
+        "self": "https:\/\/jira.example.com\/rest\/api\/2\/user?username=rest-api",
+        "name": "rest-api",
+        "key": "rest-api",
+        "emailAddress": "rest-api@gmail.com",
         "avatarUrls": {
-          "48x48": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=48",
-          "24x24": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=24",
-          "16x16": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=16",
-          "32x32": "https:\/\/secure.gravatar.com\/avatar\/0f16c6fb8dabfd9552f1c39df5c5b743?d=mm&s=32"
+          "48x48": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=48",
+          "24x24": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=24",
+          "16x16": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=16",
+          "32x32": "https:\/\/secure.gravatar.com\/avatar\/5278a1b43a3e44a253580560108db361?d=mm&s=32"
         },
-        "displayName": "Chad Norwood",
+        "displayName": "Generic REST API",
         "active": true,
         "timeZone": "America\/Chicago"
       },
@@ -244,8 +244,8 @@
       "created": "2017-10-10T15:59:52.245-0500",
       "updated": "2017-10-10T15:59:52.245-0500",
       "started": "2017-10-07T15:59:00.000-0500",
-      "timeSpent": "30m",
-      "timeSpentSeconds": 1800,
+      "timeSpent": "2h",
+      "timeSpentSeconds": 7200,
       "id": "11336",
       "issueId": "11610"
     },

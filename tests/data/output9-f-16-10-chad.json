@@ -1,0 +1,103 @@
+{
+  "req": {
+    "usernames": [
+      "chad"
+    ],
+    "jql": "worklogDate>=2017-10-03 AND worklogDate<=2017-10-05 ORDER BY key ASC",
+    "fromDateInput": "2017-10-03T16:10:00-05:00",
+    "toDateInput": "2017-10-05",
+    "fromIso8601": "2017-10-03T16:10:00-05:00 Tue",
+    "toIso8601": "2017-10-05T23:59:59-05:00 Thu",
+    "fromEpoch": 1507065000,
+    "toEpoch": 1507265999
+  },
+  "res": {
+    "dateComputed": "2017-11-07 Tue 2:53pm CST",
+    "dateComputedEpoch": 1510088023,
+    "total": {
+      "timespentSecs": 17100,
+      "timespentPretty": "4.8h"
+    },
+    "byDate": {
+      "Tue 2017-10-03": {
+        "totalSecs": 2700,
+        "authors": {
+          "chad": {
+            "totalSecs": 2700,
+            "CN-117": 1800,
+            "CN-133": 900
+          }
+        },
+        "CN-117": 1800,
+        "CN-133": 900
+      },
+      "Thu 2017-10-05": {
+        "totalSecs": 14400,
+        "authors": {
+          "chad": {
+            "totalSecs": 14400,
+            "CN-117": 3600,
+            "CN-146": 10800
+          }
+        },
+        "CN-117": 3600,
+        "CN-146": 10800
+      }
+    },
+    "byIssues": {
+      "CN-117": {
+        "summary": "Better Frames for art to hang.",
+        "timespentPretty": " 1.5h",
+        "timeSpentSecs": 5400
+      },
+      "CN-133": {
+        "summary": "Add to Github: announcementBanner.js",
+        "timespentPretty": "  15m",
+        "timeSpentSecs": 900
+      },
+      "CN-146": {
+        "summary": "Add to Github: jira-worklog.php",
+        "timespentPretty": "   3h",
+        "timeSpentSecs": 10800
+      }
+    },
+    "byAuthor": {
+      "chad": {
+        "totalSecs": 17100,
+        "CN-117": 5400,
+        "CN-133": 900,
+        "CN-146": 10800
+      }
+    },
+    "byWorklogs": [
+      {
+        "issueKey": "CN-117",
+        "author": "chad",
+        "worklogId": "11318",
+        "startTime": 1507083060,
+        "timeSpentSecs": 1800
+      },
+      {
+        "issueKey": "CN-117",
+        "author": "chad",
+        "worklogId": "11324",
+        "startTime": 1507255380,
+        "timeSpentSecs": 3600
+      },
+      {
+        "issueKey": "CN-133",
+        "author": "chad",
+        "worklogId": "11316",
+        "startTime": 1507084020,
+        "timeSpentSecs": 900
+      },
+      {
+        "issueKey": "CN-146",
+        "author": "chad",
+        "worklogId": "11321",
+        "startTime": 1507238880,
+        "timeSpentSecs": 10800
+      }
+    ]
+  }
+}

@@ -1,6 +1,9 @@
 {
   "req": {
-    "usernames": [],
+    "usernames": [
+      "jo",
+      "rest-api"
+    ],
     "jql": "worklogDate>=2017-10-03 AND worklogDate<=2017-10-05 ORDER BY key ASC",
     "fromDateInput": "2017-10-03",
     "toDateInput": "2017-10-05",
@@ -13,19 +16,13 @@
     "dateComputed": "2017-11-07 Tue 2:53pm CST",
     "dateComputedEpoch": 1510088023,
     "total": {
-      "timespentSecs": 84600,
-      "timespentPretty": "23.5h"
+      "timespentSecs": 53100,
+      "timespentPretty": "14.8h"
     },
     "byDate": {
       "Tue 2017-10-03": {
-        "totalSecs": 22500,
+        "totalSecs": 5400,
         "authors": {
-          "chad": {
-            "totalSecs": 17100,
-            "CN-117": 1800,
-            "CN-133": 900,
-            "CN-146": 14400
-          },
           "jo": {
             "totalSecs": 3600,
             "CN-130": 3600
@@ -35,10 +32,8 @@
             "CN-146": 1800
           }
         },
-        "CN-117": 1800,
         "CN-130": 3600,
-        "CN-133": 900,
-        "CN-146": 16200
+        "CN-146": 1800
       },
       "Wed 2017-10-04": {
         "totalSecs": 46800,
@@ -51,52 +46,29 @@
         "CN-146": 46800
       },
       "Thu 2017-10-05": {
-        "totalSecs": 15300,
+        "totalSecs": 900,
         "authors": {
-          "chad": {
-            "totalSecs": 14400,
-            "CN-117": 3600,
-            "CN-146": 10800
-          },
           "jo": {
             "totalSecs": 900,
             "CN-130": 900
           }
         },
-        "CN-117": 3600,
-        "CN-130": 900,
-        "CN-146": 10800
+        "CN-130": 900
       }
     },
     "byIssues": {
-      "CN-117": {
-        "summary": "Better Frames for art to hang.",
-        "timespentPretty": " 1.5h",
-        "timeSpentSecs": 5400
-      },
       "CN-130": {
         "summary": "Print pictures, posters",
         "timespentPretty": " 1.3h",
         "timeSpentSecs": 4500
       },
-      "CN-133": {
-        "summary": "Add to Github: announcementBanner.js",
-        "timespentPretty": "  15m",
-        "timeSpentSecs": 900
-      },
       "CN-146": {
         "summary": "Add to Github: jira-worklog.php",
-        "timespentPretty": "20.5h",
-        "timeSpentSecs": 73800
+        "timespentPretty": "13.5h",
+        "timeSpentSecs": 48600
       }
     },
     "byAuthor": {
-      "chad": {
-        "totalSecs": 31500,
-        "CN-117": 5400,
-        "CN-133": 900,
-        "CN-146": 25200
-      },
       "jo": {
         "totalSecs": 51300,
         "CN-130": 4500,
@@ -108,20 +80,6 @@
       }
     },
     "byWorklogs": [
-      {
-        "issueKey": "CN-117",
-        "author": "chad",
-        "worklogId": "11318",
-        "startTime": 1507083060,
-        "timeSpentSecs": 1800
-      },
-      {
-        "issueKey": "CN-117",
-        "author": "chad",
-        "worklogId": "11324",
-        "startTime": 1507255380,
-        "timeSpentSecs": 3600
-      },
       {
         "issueKey": "CN-130",
         "author": "jo",
@@ -137,20 +95,6 @@
         "timeSpentSecs": 900
       },
       {
-        "issueKey": "CN-133",
-        "author": "chad",
-        "worklogId": "11316",
-        "startTime": 1507084020,
-        "timeSpentSecs": 900
-      },
-      {
-        "issueKey": "CN-146",
-        "author": "chad",
-        "worklogId": "11315",
-        "startTime": 1507064940,
-        "timeSpentSecs": 14400
-      },
-      {
         "issueKey": "CN-146",
         "author": "rest-api",
         "worklogId": "11319",
@@ -163,13 +107,6 @@
         "worklogId": "11320",
         "startTime": 1507173960,
         "timeSpentSecs": 46800
-      },
-      {
-        "issueKey": "CN-146",
-        "author": "chad",
-        "worklogId": "11321",
-        "startTime": 1507238880,
-        "timeSpentSecs": 10800
       }
     ]
   }

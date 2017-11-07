@@ -78,6 +78,11 @@ class JiraWorklog extends JiraApi
 
         if ("string" === gettype($toDateInput)) {
             $this->toEpoch = strtotime($toDateInput);
+            if (strpos(date('c', $this->toEpoch), '00:00:00')) {
+                // handle case where input string probably did not specify an exact time, just date. 
+                // Need to adjust so it includes all time in that date
+                $this->toEpoch += 60*60*24 - 1;
+            }
         } elseif ("integer" === gettype($toDateInput)) {
             $this->toEpoch = $toDateInput;
         } else {
@@ -103,9 +108,12 @@ class JiraWorklog extends JiraApi
         $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL$jql ORDER BY key ASC";
         $this->req['fromDateInput'] = $fromDateInput;
         $this->req['toDateInput']   = $toDateInput;
+        $this->req['fromIso8601'] = date('c D', $this->fromEpoch);
+        $this->req['toIso8601']   = date('c D', $this->toEpoch); // Jira uses ISO 8601, so using for easier debugging
         $this->req['fromEpoch'] = $this->fromEpoch;
         $this->req['toEpoch']   = $this->toEpoch;
 
+        //
         // Input validated, Now get issue keys from Jira
         // 
         $apiResponse = $this->apiCall('search?maxResults=999&jql=' . urlencode($this->req['jql']), 'GET');
@@ -143,7 +151,8 @@ class JiraWorklog extends JiraApi
      */
     public function parseJiraWorklogs($json, $key, $fromEpoch, $toEpoch, $authors=[])
     {
-        $this->dbg("parseJiraWorklogs($key) fromEpoch=$fromEpoch toEpoch=$toEpoch ");
+        $this->dbg("parseJiraWorklogs($key) fromEpoch=$fromEpoch (". date('c', $fromEpoch)
+                    .") toEpoch=$toEpoch (". date('c', $toEpoch) .")\n");
 
         foreach ($json['worklogs'] as $entry) {
             $startedEpoch = strtotime($entry['started']);
@@ -301,7 +310,9 @@ class JiraWorklog extends JiraApi
             if (!array_key_exists($key, $dt)) {
                 continue;
             }
-            $ret[] = $this->roundit($dt[$key]) . date(' n/j', strtotime($dateStr));
+            // strtotime() can't convert "2017 week 2"
+            $shorterDate = strtotime($dateStr) ? date('n/j', strtotime($dateStr)) : $dateStr;
+            $ret[] = $this->roundit($dt[$key]) . " $shorterDate";
         }
         return $ret;
     }

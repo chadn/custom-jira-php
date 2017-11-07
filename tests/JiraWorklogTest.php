@@ -58,7 +58,7 @@ final class JiraWorklogTest extends TestCase
     public function providerApiCallCache()
     {
         $cmd = 'search?maxResults=999&jql=worklogDate%3E%3D2017-10-03+AND+worklogDate%3C%3D2017-10-05+ORDER+BY+key+ASC';
-        $expectedResult = file_get_contents(__DIR__ . "/data/search.json");
+        $expectedResult = file_get_contents(__DIR__ . "/data/CN-search.json");
         //$expectedResult = ' .. contents of '. __DIR__ . "/search.json";
         $ret = array(
             [$cmd, $expectedResult]
@@ -72,14 +72,43 @@ final class JiraWorklogTest extends TestCase
     }
 
 
-    public function testJsonOutput1()
+    public function testCsvOutput()
     {
+        $this->jw->setConfig(['asOfDateFmt' => 'Y-m-d H:i D T']);
+
         $this->jw->getJiraIssues('2017-10-03', '2017-10-05');
 
-        $jsonActual = $this->jw->getOutput('json');
-        //file_put_contents(__DIR__ . "/data/output1.json", $jsonActual);
+        $strActual = $this->jw->getOutput('csv');
+        $strExpected = file_get_contents(__DIR__ . "/data/output1.csv");
 
-        $jsonExpected = file_get_contents(__DIR__ . "/data/output1.json");
+        // remove Generated timestamp. Ex: Generated 2017-11-07 13:40 Tue CST using JQL
+        $strActual   = preg_replace('/Generated.*using JQL/', 'Generated ... using JQL', $strActual);
+        $strExpected = preg_replace('/Generated.*using JQL/', 'Generated ... using JQL', $strExpected);
+
+        $this->assertEquals( 
+            $this->jw->jsonPrettyPrint( $strExpected ), 
+            $this->jw->jsonPrettyPrint( $strActual )
+        );
+
+    }
+
+
+    /**
+     * @param string   $p1from from date time string
+     * @param string   $p2to   to date time string
+     * @param string   $p3users usernames  
+     * @param string   $fn base filename for input data
+     * 
+     * @dataProvider providerTestJsonOutput
+     */
+    public function testJsonOutput($p1from, $p2to, $p3users, $fn)
+    {
+        //$this->jw->getJiraIssues('2017-10-03', '2017-10-05', 'chad,rest-api,jo');
+        $this->jw->getJiraIssues($p1from, $p2to, $p3users);
+
+        $jsonActual = $this->jw->getOutput('json');
+
+        $jsonExpected = file_get_contents(__DIR__ . "/data/$fn");
 
         // remove dateComputed before comparing
         // 
@@ -97,7 +126,28 @@ final class JiraWorklogTest extends TestCase
 
     }
 
+    public function providerTestJsonOutput()
+    {
+        /* Generated black box tests easily by doing the following:
 
+        php jira-worklog.php -avd -o=csv  >output1.csv
+        php jira-worklog.php -avd -o=json  >output1.json
+        php jira-worklog.php -avd -o=json -u=chad,jo >output2-chad-jo.json
+        php jira-worklog.php -avd -o=json -u=jo,rest-api >output3-jo-rest-api.json
+        php jira-worklog.php -avd -o=json -f='2017-10-03T16:08:00-05:00' >output7-f-16-08.json
+        php jira-worklog.php -avd -o=json -f='2017-10-03T16:10:00-05:00' >output8-f-16-10.json
+        php jira-worklog.php -avd -o=json -f='2017-10-03T16:10:00-05:00' -u=chad >output9-f-16-10-chad.json
+        */
+        return array(
+            array('2017-10-03', '2017-10-05', '', 'output1.json'),
+            array('2017-10-03', '2017-10-05', 'chad,jo', 'output2-chad-jo.json'),
+            array('2017-10-03', '2017-10-05', 'jo,rest-api', 'output3-jo-rest-api.json'),
+            array('2017-10-03T16:08:00-05:00', '2017-10-05', '', 'output7-f-16-08.json'),
+            array('2017-10-03T16:10:00-05:00', '2017-10-05', '', 'output8-f-16-10.json'),
+            array('2017-10-03T16:10:00-05:00', '2017-10-05', 'chad', 'output9-f-16-10-chad.json')
+        
+        );
+    }
 
     /**
      * @param string   $expectedResult human readable time in minutes (m) or hours (h)
