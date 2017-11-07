@@ -107,7 +107,7 @@ Worklogs by Date:
 real 2.040  user 0.338  sys 0.031 pcpu 18.10
 ```
 
-Here's an example of checking 2 users over 2 days, verbose output (shows curl calls), and updating CN-146 via POST with worklog summary comment. You can see text output below as well as view the [json output](jira-worklog.json) which was generated with same options except `-o=json` at end.
+Here's an example of checking 2 users over 2 days, verbose output (shows curl calls), and updating CN-146 via POST with worklog summary comment. You can see text output below as well as view the [json output](tests/data/output2-chad-jo.json) which was generated with same options except `-o=json` at end.
 
 ```
 php ./jira-worklog.php  -f='-2 days' -u=chad,jo -k=CN-156 -v
@@ -120,20 +120,21 @@ curl: err= 139ms 200 GET 0 5897 https://jira.example.com/rest/api/2/issue/CN-146
 curl: err= 160ms 200 GET 0 1487 https://jira.example.com/rest/api/2/issue/CN-153/worklog
 curl: err= 230ms 201 POST 0 1944 https://jira.example.com/rest/api/2/issue/CN-146/comment
 
-19h Total Time logged, from 2017-10-03 Tue to 2017-10-05 Thu
+23h Total Time logged, from 2017-10-03 Tue to 2017-10-05 Thu
 only by these users: chad, jo
- as of 2017-10-05 Thu 9:17am CDT
+ as of 2017-11-07 Tue 3:22pm CST
 
 Total logged per issue:
-  30m CN-117 Better Frames for art to hang.
-  30m CN-130 Print pictures, posters
-  15m CN-133 Random Github work
-17.5h CN-146 jira-worklog.php
-  15m CN-153 Fix dropped SSH connections 
+ 1.5h CN-117 Better Frames for art to hang. (30m 10/3, 1h 10/5)
+ 1.3h CN-130 Print pictures, posters (1h 10/3, 15m 10/5)
+  15m CN-133 Add to Github: announcementBanner.js (15m 10/3)
+  20h CN-146 Add to Github: jira-worklog.php (4h 10/3, 13h 10/4, 3h 10/5)
 
 Worklogs by Date:
-  6h Tue 2017-10-03 -- 30m CN-117, 30m CN-130, 15m CN-133, 4.5h CN-146, 15m CN-153
+5.8h Tue 2017-10-03 -- 30m CN-117, 1h CN-130, 15m CN-133, 4h CN-146
  13h Wed 2017-10-04 -- 13h CN-146
+4.3h Thu 2017-10-05 -- 1h CN-117, 15m CN-130, 3h CN-146
+
 ```
 
 ### Tests
@@ -231,4 +232,13 @@ real 0.076  user 0.066  sys 0.009 pcpu 99.21
 - [x] add basic phpunit tests
 - [x] mock Jira API with phpunit
 - [ ] async API requests
+
+### License ###
+
+This code is released under the terms of the [GPLv3 license](LICENSE).
+
+The MIT License is simple and easy to understand and it places almost no restrictions on what you can do.
+You are free to use in any other project (even commercial projects) as long as the copyright header is left intact.
+
+
 
