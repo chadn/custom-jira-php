@@ -271,7 +271,7 @@ class JiraWorklog extends JiraApi
      */
     public function prettyPrintWorklogByDate()
     {
-        $txtStr = "Daily Worklogs:\n";
+        $txtStr = "Worklogs by Date:\n";
         foreach ($this->byDate as $dateStr => $dt) {
             if (0 === $dt['totalSecs']) {
                 continue;
@@ -488,8 +488,20 @@ class JiraWorklog extends JiraApi
         return sprintf($fmt, round($x / (60 * 6))/10 . "h");
     }
 
+    /**
+     * sort by date, with fallback to sort using a "natural order" algorithm
+     * @param  string $a first string
+     * @param  string $b second string
+     * @return integer   returns < 0 if a is less than b; > 0 if a is greater than b, and 0 if equal.
+     */
     public static function mySortByDateStr($a, $b)
     {
-        return strtotime($a) - strtotime($b);
+        $sa = strtotime($a);
+        $sb = strtotime($b);
+        if ($sa && $sb) {
+            return $sa - $sb;
+        }
+        // strtotime could not parse, using fallback
+        return strnatcmp($a,$b);
     }
 }

@@ -28,6 +28,7 @@ $me [options]
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is $cfgFile
   -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
+  -w      instead of giving daily totals, give totals per week.
   -v      verbose output, including basic timing info with API.
   -d      debug output - warning - this contains a ton of information.
   -h      show this help and exit.
@@ -45,6 +46,7 @@ $me -f='-7 days' -o=csv           # the last 7 days, output in csv (open with ex
 $me -f=2017-1-1  -j=labels%3Dfun  # last 7 days, jql: labels=fun
 $me -f=2017-1-1  -t=2017-1-1      # just new years day 2017
 $me -f=2017-1    -t=2017-3        # Q1 of 2017
+$me -f=2017-1    -t=2017-3  -w    # Q1 of 2017, weekly byDate summary
 
 USAGE1CLI;
 $usageWeb = <<<USAGE2WEB
@@ -57,6 +59,7 @@ $usageWeb = <<<USAGE2WEB
 <a href="$me?f=-7+days&j=labels%3Dfun">$me?f=-7+days&j=labels%3Dfun</a> # last 7 days, jql: labels=fun
 <a href="$me?f=2017-1-1&t=2017-1-1">$me?f=2017-1-1&t=2017-1-1</a>    # just new years day 2017
 <a href="$me?f=2017-1&t=2017-3"    >$me?f=2017-1&t=2017-3</a>        # Q1 of 2017
+<a href="$me?f=2017-1&t=2017-3"    >$me?f=2017-1&t=2017-3&w=1</a>    # Q1 of 2017, weekly byDate summary
 
 USAGE2WEB;
 
@@ -67,7 +70,7 @@ $usage = $isCli ? $usage : "<pre>". $usage . "</pre>";
 if ($isCli) {
     // : required
     // :: optional
-    $options = getopt("f:t::u::o::k::c::j::hvd");
+    $options = getopt("c::df:hj::k::o::t::u::vw");
 
 } else {
     // allow options from  $_GET, $_POST and $_COOKIE
@@ -93,6 +96,9 @@ if (@isset($options[v])) {
 }
 if (@isset($options[d])) {
   $cfg['debug'] = true;
+}
+if (@isset($options[w])) {
+  $cfg['byDateFmt'] = 'Y \W\e\e\k W';
 }
 
 

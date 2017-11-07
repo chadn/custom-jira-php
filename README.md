@@ -24,8 +24,9 @@ php jira-worklog.php [options]
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is ./jira-config.php
   -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
+  -w      instead of giving daily totals, give totals per week.
   -v      verbose output, including basic timing info with API.
-  -d      debug output - VERY verbose, including "all worklog authors" (jira usernames for -u).
+  -d      debug output - warning - this contains a ton of information.
   -h      show this help and exit.
 
 Examples:
@@ -38,6 +39,7 @@ php jira-worklog.php -f='-7 days' -o=csv           # the last 7 days, output in 
 php jira-worklog.php -f=2017-1-1  -j=labels%3Dfun  # last 7 days, jql: labels=fun
 php jira-worklog.php -f=2017-1-1  -t=2017-1-1      # just new years day 2017
 php jira-worklog.php -f=2017-1    -t=2017-3        # Q1 of 2017
+php jira-worklog.php -f=2017-1    -t=2017-3  -w    # Q1 of 2017, weekly byDate summary
 
 ```
 
@@ -72,7 +74,7 @@ Total logged per issue:
    3h CN-144 Volunteer and Non-profit Work (2h 9/20, 1h 9/21)
 
 
-Daily Worklogs:
+Worklogs by Date:
   4h Fri 2017-09-01 -- 1h CN-100, 3h CN-124
   2h Sat 2017-09-02 -- 2h CN-110
   2h Sun 2017-09-03 -- 1h CN-100, 1h CN-125
@@ -118,7 +120,7 @@ Total logged per issue:
 17.5h CN-146 jira-worklog.php
   15m CN-153 Fix dropped SSH connections 
 
-Daily Worklogs:
+Worklogs by Date:
   6h Tue 2017-10-03 -- 30m CN-117, 30m CN-130, 15m CN-133, 4.5h CN-146, 15m CN-153
  13h Wed 2017-10-04 -- 13h CN-146
 ```
@@ -166,4 +168,5 @@ Norhaus\Tests\JiraWorklog
 - [x] add csv output
 - [x] add basic phpunit tests
 - [x] mock Jira API with phpunit
+- [ ] async API requests
 
