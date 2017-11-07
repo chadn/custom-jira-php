@@ -7,7 +7,6 @@ class JiraWorklog extends JiraApi
 {
     public $req;          // request object, used for output
     public $res;          // result object, used for output
-    public $allAuthors;   // object, list of all authors within timeframe, key is authors
     private $fromEpoch;   // number of seconds since epoch
     private $toEpoch;     // number of seconds since epoch
     private $total;       // array of totals
@@ -99,7 +98,6 @@ class JiraWorklog extends JiraApi
         }
 
         $this->byWorklogs = [];
-        $this->allAuthors = [];
         $fromDateJQL = date('Y-m-d', $this->fromEpoch);
         $toDateJQL   = date('Y-m-d', $this->toEpoch);
         $this->req['jql'] = "worklogDate>=$fromDateJQL AND worklogDate<=$toDateJQL$jql ORDER BY key ASC";
@@ -122,7 +120,8 @@ class JiraWorklog extends JiraApi
 
         // Now get worklogs for each issueKey
         foreach ($this->byIssues as $key => $tkt) {
-            $this->parseJiraWorklogs($key, $this->fromEpoch, $this->toEpoch, $this->req['usernames']);
+            $ret = json_decode($this->apiCall("issue/$key/worklog", 'GET'), true);
+            $this->parseJiraWorklogs($ret, $key, $this->fromEpoch, $this->toEpoch, $this->req['usernames']);
         }
         $this->prepOutput();
         //$this->saveIt('results', $this->res);
@@ -135,21 +134,18 @@ class JiraWorklog extends JiraApi
     /**
      * Fetches worklogs from Jira given $key, returns worklogs within date and matching authors
      *
+     * @param  array    $json       json_decoded response from Jira API containing worklogs
      * @param  string   $key        issue key
      * @param  integer  $fromEpoch  starting from this date, in seconds since epoch
      * @param  integer  $toEpoch    ending at this date, in seconds since epoch
      * @param  string   $author     if not empty, only count worklogs made by this author
      * @return array    $worklogs   list of worklogs that match times and authors.
      */
-    public function parseJiraWorklogs($key, $fromEpoch, $toEpoch, $authors=[])
+    public function parseJiraWorklogs($json, $key, $fromEpoch, $toEpoch, $authors=[])
     {
         $this->dbg("parseJiraWorklogs($key) fromEpoch=$fromEpoch toEpoch=$toEpoch ");
 
-        # get the full worklog for that issue
-        //$ret = json_decode(apiCall("issue/$key/worklog"), true);
-        $ret = json_decode($this->apiCall("issue/$key/worklog", 'GET'), true);
-
-        foreach ($ret['worklogs'] as $entry) {
+        foreach ($json['worklogs'] as $entry) {
             $startedEpoch = strtotime($entry['started']);
             $dbgStr = "worklog {$entry['id']} with started=$startedEpoch ". $entry['started'];
 
@@ -185,7 +181,6 @@ class JiraWorklog extends JiraApi
                 'startTime'     => $startedEpoch,
                 'timeSpentSecs' => $entry['timeSpentSeconds']
             ];
-            $this->allAuthors[$entry['author']['name']] = 1;
         }
     }
 
@@ -265,11 +260,6 @@ class JiraWorklog extends JiraApi
             'byAuthor'          => $this->byAuthor,
             'byWorklogs'        => $this->byWorklogs
         ];
-        if ($this->config['debug']) {
-            $allAuthors = array_keys($this->allAuthors);
-            sort($allAuthors);
-            $this->dbg("all worklog authors: " . implode(",", $allAuthors) . "\n");
-        }
     }
 
 
@@ -378,6 +368,7 @@ class JiraWorklog extends JiraApi
         switch ($fmt) {
             case 'json':  return $this->outputJson();
             case 'html':  return $this->outputHtml();
+            case 'csv':   return $this->outputCsv();
             case 'jira':  return $this->outputJiraComment();
             case 'txt':   return $this->outputTxt();
             default:      return $this->outputTxt();
@@ -440,6 +431,26 @@ class JiraWorklog extends JiraApi
         return $output;
     }
 
+    /**
+     * Returns string formatted for Jira comment from most recent worklog request.
+     *
+     * @return string
+     */
+    public function outputCsv()
+    {
+        $cmt = ", NOTE: Generated ". $this->res['dateComputed'] ." using JQL: ". $this->req['jql'];
+        $output = "WorklogId, Author, IssueKey, StartTime, MinutesLogged$cmt\n";
+        foreach ($this->byWorklogs as $key => $worklog) {
+            $output .= implode(', ', [
+                    $worklog['worklogId'], 
+                    $worklog['author'], 
+                    $worklog['issueKey'], 
+                    date($this->config['asOfDateFmt'], $worklog['startTime']), 
+                    round($worklog['timeSpentSecs'] / 60)
+                ]) . "\n";
+        }
+        return $output;
+    }
 
     /**
      * adds comment to Jira Issue with output from most recent worklog request.

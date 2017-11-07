@@ -15,12 +15,12 @@ This repo contains php scripts that use Jira's REST API
 Outputs a summary of hours logged to Jira issues over a given timespan.  This is a simple free alternative to [Tempo Timesheets](https://tempo.io/products/tempo-timesheets).
 
 ```
-php ./jira-worklog.php [options]
+php jira-worklog.php [options]
 
   -f str  from date string, anything that can be parsed by strtotime(). REQUIRED.
   -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'today'.
   -u usrs filter worklogs to only include ones matching jira users. Comma separate usernames in usrs.
-  -o out  output format, specify one of: txt, json, html.  Optional, default is txt.
+  -o out  output format, specify one of: txt, json, csv, html.  Optional, default is txt.
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is ./jira-config.php
   -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
@@ -30,12 +30,15 @@ php ./jira-worklog.php [options]
 
 Examples:
 
-php ./jira-worklog.php -f='-7 days'                # summarize worklogs over the last 7 days
-php ./jira-worklog.php -f='-7 days' -u=chad,jo     # the last 7 days, only users chad and jo
-php ./jira-worklog.php -f='-7 days' -k=CN-12       # the last 7 days, and post comment to CN-12
-php ./jira-worklog.php -f='-7 days' -o=json        # the last 7 days, output in json
-php ./jira-worklog.php -f=2017-1-1  -t=2017-1-1    # just new years day 2017
-php ./jira-worklog.php -f=2017-1    -t=2017-3      # Q1 of 2017
+php jira-worklog.php -f='-7 days'                  # summarize worklogs over the last 7 days
+php jira-worklog.php -f='-7 days' -u=chad,jo       # the last 7 days, only users chad and jo
+php jira-worklog.php -f='-7 days' -k=CN-12         # the last 7 days, and post comment to CN-12
+php jira-worklog.php -f='-7 days' -o=json          # the last 7 days, output in json
+php jira-worklog.php -f='-7 days' -o=csv           # the last 7 days, output in csv (open with excel)
+php jira-worklog.php -f=2017-1-1  -j=labels%3Dfun  # last 7 days, jql: labels=fun
+php jira-worklog.php -f=2017-1-1  -t=2017-1-1      # just new years day 2017
+php jira-worklog.php -f=2017-1    -t=2017-3        # Q1 of 2017
+
 ```
 
 ### Examples
@@ -160,7 +163,7 @@ Norhaus\Tests\JiraWorklog
 - [x] add support for filtering by jira user
 - [ ] support case where worklogs are in more than 999 jira issues
 - [ ] improve html output
-- [ ] add csv output
+- [x] add csv output
 - [x] add basic phpunit tests
 - [x] mock Jira API with phpunit
 

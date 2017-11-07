@@ -24,7 +24,7 @@ $me [options]
   -f str  from date string, anything that can be parsed by strtotime(). REQUIRED.
   -t str  to date string, anything that can be parsed by strtotime(). Optional, default is 'today'.
   -u usrs filter worklogs to only include ones matching jira users. Comma separate usernames in usrs.
-  -o out  output format, specify one of: txt, json, html.  Optional, default is $outfmt.
+  -o out  output format, specify one of: txt, json, csv, html.  Optional, default is $outfmt.
   -k key  jira issue key, will add comment containing worklog summary.  Optional.
   -c fn   config file, where you store apiCredentials. Optional, default is $cfgFile
   -j jql  encoded jql to further limit results (beyond dates and users). Should not have "Order by".
@@ -41,6 +41,7 @@ $me -f='-7 days'                  # summarize worklogs over the last 7 days
 $me -f='-7 days' -u=chad,jo       # the last 7 days, only users chad and jo
 $me -f='-7 days' -k=CN-12         # the last 7 days, and post comment to CN-12
 $me -f='-7 days' -o=json          # the last 7 days, output in json 
+$me -f='-7 days' -o=csv           # the last 7 days, output in csv (open with excel) 
 $me -f=2017-1-1  -j=labels%3Dfun  # last 7 days, jql: labels=fun
 $me -f=2017-1-1  -t=2017-1-1      # just new years day 2017
 $me -f=2017-1    -t=2017-3        # Q1 of 2017
@@ -52,6 +53,7 @@ $usageWeb = <<<USAGE2WEB
 <a href="$me?f=-7+days&u=chad,jo"  >$me?f=-7+days&u=chad,jo</a>      # the last 7 days, only users chad and jo
 <a href="$me?f=-7+days&k=CN-12"    >$me?f=-7+days&k=CN-12</a>        # the last 7 days, and post comment to CN-12
 <a href="$me?f=-7+days&o=json"     >$me?f=-7+days&o=json</a>         # the last 7 days, output in json
+<a href="$me?f=-7+days&o=json"     >$me?f=-7+days&o=csv</a>          # the last 7 days, output in csv (open with excel) 
 <a href="$me?f=-7+days&j=labels%3Dfun">$me?f=-7+days&j=labels%3Dfun</a> # last 7 days, jql: labels=fun
 <a href="$me?f=2017-1-1&t=2017-1-1">$me?f=2017-1-1&t=2017-1-1</a>    # just new years day 2017
 <a href="$me?f=2017-1&t=2017-3"    >$me?f=2017-1&t=2017-3</a>        # Q1 of 2017
@@ -102,12 +104,17 @@ if (1 === preg_match("/(\d\d\d\d-)(\d\d?)$/", $toDateInput)) {
 
 $jw = new JiraWorklog($cfg);
 $jw->getJiraIssues($fromDateInput, $toDateInput, $usernames, $jql);
+$outputStr = $jw->getOutput($outfmt);
 
 if (!$isCli && 'json' === $outfmt) {
     header('Content-Type: application/json');
 }
-echo $jw->getOutput($outfmt);
-
+if (!$isCli && 'csv' === $outfmt) {
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename=worklogs-'.date('U').'.csv');
+    header("Content-Length: ". strlen($outputStr));
+}
+echo $outputStr;
 if ($jiraKey) {
     $jw->postComment($jiraKey);
 }
